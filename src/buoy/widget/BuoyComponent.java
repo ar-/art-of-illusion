@@ -35,4 +35,15 @@ public class BuoyComponent extends SingleWidgetPanel
   {
     return widget;
   }
+
+  /**
+   * If the contained Widget is a WidgetContainer, make sure its contents are layed out correctly.
+   */
+
+  public void validate()
+  {
+    super.validate();
+    if (widget instanceof WidgetContainer)
+      ((WidgetContainer) widget).layoutChildren();
+  }
 }
