@@ -2,7 +2,6 @@ package buoy.widget;
 
 import buoy.xml.*;
 import buoy.xml.delegate.*;
-import buoy.internal.*;
 
 import javax.swing.*;
 
@@ -215,7 +214,7 @@ public class BStandardDialog
       Widget widget = (Widget) message;
       if (widget.getParent() != null)
         widget.getParent().remove(widget);
-      return new SingleWidgetPanel(widget);
+      return new BuoyComponent(widget);
     }
     return message;
   }
