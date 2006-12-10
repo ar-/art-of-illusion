@@ -157,6 +157,12 @@ public class BTable extends Widget
         super.editingStopped(ev);
         BTable.this.dispatchEvent(new CellValueChangedEvent(BTable.this, row, col));
       }
+      protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed)
+      {
+        if (e.getKeyCode() == KeyEvent.VK_META || e.getKeyCode() == KeyEvent.VK_CAPS_LOCK)
+          return false;
+        return super.processKeyBinding(ks, e, condition, pressed);
+      }
     };
   }
   
