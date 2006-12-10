@@ -47,7 +47,7 @@ public class BScrollPane extends WidgetContainer
   static
   {
     WidgetEncoder.setPersistenceDelegate(ScrollbarPolicy.class, new StaticFieldDelegate(BScrollPane.class));
-    String os = ((String) System.getProperties().get("os.name")).toLowerCase();
+    String os = System.getProperty("os.name", "").toLowerCase();
     IS_MACINTOSH = os.startsWith("mac os x");
   }
   
