@@ -1,8 +1,9 @@
 package buoy.widget;
 
-import buoy.internal.*;
 import buoy.xml.*;
 import buoy.xml.delegate.*;
+import buoy.event.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -85,19 +86,10 @@ public class BScrollPane extends WidgetContainer
   
   public BScrollPane(ScrollbarPolicy horizontalPolicy, ScrollbarPolicy verticalPolicy)
   {
-    WidgetContainerPanel panel = new WidgetContainerPanel(this);
+    JScrollPane panel = createComponent();
     component = panel;
     hPolicy = horizontalPolicy;
     vPolicy = verticalPolicy;
-    panel.add(contentPort = new ContentViewport());
-    panel.add(rowHeaderPort = new JViewport());
-    panel.add(colHeaderPort = new JViewport());
-    rowHeaderPort.setLayout(null);
-    colHeaderPort.setLayout(null);
-    rowHeaderPort.setOpaque(false);
-    colHeaderPort.setOpaque(false);
-    forceWidth = (hPolicy == SCROLLBAR_NEVER);
-    forceHeight = (vPolicy == SCROLLBAR_NEVER);
     ChangeListener scrollListener = new ChangeListener() {
       public void stateChanged(ChangeEvent e)
       {
@@ -132,7 +124,6 @@ public class BScrollPane extends WidgetContainer
           bar.setValue(bar.getValue()+bar.getUnitIncrement(direction)*ev.getScrollAmount()*direction);
       }
     };
-    contentPort.addMouseWheelListener(wheelListener);
     vscroll = new ScrollPaneScrollBar(0, 1, 0, 100, BScrollBar.VERTICAL);
     panel.add(vscroll.component);
     setAsParent(vscroll);
@@ -143,6 +134,16 @@ public class BScrollPane extends WidgetContainer
     setAsParent(hscroll);
     ((JScrollBar) hscroll.component).getModel().addChangeListener(scrollListener);
     hscroll.component.addMouseWheelListener(wheelListener);
+    panel.setViewport(contentPort = new ContentViewport());
+    panel.setRowHeader(rowHeaderPort = new JViewport());
+    panel.setColumnHeader(colHeaderPort = new JViewport());
+    rowHeaderPort.setLayout(null);
+    colHeaderPort.setLayout(null);
+    rowHeaderPort.setOpaque(false);
+    colHeaderPort.setOpaque(false);
+    forceWidth = (hPolicy == SCROLLBAR_NEVER);
+    forceHeight = (vPolicy == SCROLLBAR_NEVER);
+    contentPort.addMouseWheelListener(wheelListener);
   }
   
   /**
@@ -159,6 +160,16 @@ public class BScrollPane extends WidgetContainer
   {
     this(horizontalPolicy, verticalPolicy);
     setContent(contentWidget);
+  }
+
+  /**
+   * Create the JScrollPane which serves as this Widget's Component.  This method is protected so that
+   * subclasses can override it.
+   */
+
+  protected JScrollPane createComponent()
+  {
+    return new ScrollPaneComponent();
   }
 
   /**
@@ -709,6 +720,36 @@ public class BScrollPane extends WidgetContainer
   {
     prefSize = minSize = null;
     super.invalidateSize();
+  }
+
+  /**
+   * This is a JScrollPane subclass which is the component for the BScrollPane.  It is nearly identical
+   * to WidgetContainerPanel, except that it extends JScrollPane instead of JPanel.
+   */
+
+  private class ScrollPaneComponent extends JScrollPane
+  {
+    private ScrollPaneComponent()
+    {
+      setLayout(null);
+    }
+
+    public void paintComponent(Graphics g)
+    {
+      if (BScrollPane.this.isOpaque())
+      {
+        Dimension size = getSize();
+        g.setColor(getBackground());
+        g.fillRect(0, 0, size.width, size.height);
+        g.setColor(getForeground());
+      }
+      BScrollPane.this.dispatchEvent(new RepaintEvent(BScrollPane.this, (Graphics2D) g));
+    }
+
+    public boolean isOpaque()
+    {
+      return BScrollPane.this.isOpaque();
+    }
   }
   
   /**
