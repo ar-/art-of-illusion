@@ -1,6 +1,5 @@
 package buoy.widget;
 
-import buoy.event.*;
 import buoy.internal.*;
 import buoy.xml.*;
 import buoy.xml.delegate.*;
@@ -63,9 +62,9 @@ public class ColumnContainer extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
-    return child.iterator();
+    return new ArrayList(child);
   }
   
   /**

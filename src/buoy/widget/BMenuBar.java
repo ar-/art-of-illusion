@@ -90,9 +90,9 @@ public class BMenuBar extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
-    return menus.iterator();
+    return new ArrayList(menus);
   }
   
   /**

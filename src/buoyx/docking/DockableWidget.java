@@ -166,12 +166,12 @@ public class DockableWidget extends WidgetContainer
     return (content == null ? 0 : 1);
   }
 
-  public Iterator getChildren()
+  public Collection getChildren()
   {
     ArrayList children = new ArrayList();
     if (content != null)
       children.add(content);
-    return children.iterator();
+    return children;
   }
 
   public void remove(Widget widget)

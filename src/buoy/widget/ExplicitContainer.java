@@ -1,6 +1,5 @@
 package buoy.widget;
 
-import buoy.event.*;
 import buoy.internal.*;
 import buoy.xml.*;
 import buoy.xml.delegate.*;
@@ -66,9 +65,9 @@ public class ExplicitContainer extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
-    return children.iterator();
+    return new ArrayList(children);
   }
   
   /**

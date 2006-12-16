@@ -237,7 +237,7 @@ class DragManager
     do
     {
       found = false;
-      Iterator children = container.getChildren();
+      Iterator children = container.getChildren().iterator();
       while (children.hasNext())
       {
         Widget w = (Widget) children.next();

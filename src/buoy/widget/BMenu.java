@@ -151,9 +151,9 @@ public class BMenu extends WidgetContainer implements MenuWidget
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
-    return elements.iterator();
+    return new ArrayList(elements);
   }
   
   /**

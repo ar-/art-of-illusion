@@ -307,7 +307,7 @@ public class DockingContainer extends WidgetContainer
 
     // Mark every child as not having a parent, so they won't get confused when we add them again.
 
-    Iterator allChildren = getChildren();
+    Iterator allChildren = getChildren().iterator();
     while (allChildren.hasNext())
     {
       Widget child = (Widget) allChildren.next();
@@ -426,7 +426,7 @@ public class DockingContainer extends WidgetContainer
     return getChildCount()-(content == null ? 0 : 1);
   }
 
-  public Iterator getChildren()
+  public Collection getChildren()
   {
     ArrayList children = new ArrayList(0);
     if (content != null)
@@ -437,7 +437,7 @@ public class DockingContainer extends WidgetContainer
       for (int j = 0; j < thisTab.size(); j++)
         children.add((Widget) thisTab.get(j));
     }
-    return children.iterator();
+    return children;
   }
 
   /**

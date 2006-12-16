@@ -65,14 +65,14 @@ public class GridContainer extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
     ArrayList ls = new ArrayList(numCols*numRows);
     for (int i = 0; i < child.length; i++)
       for (int j = 0; j < child[i].length; j++)
         if (child[i][j] != null)
           ls.add(child[i][j]);
-    return ls.iterator();
+    return ls;
   }
   
   /**

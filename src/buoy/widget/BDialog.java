@@ -139,14 +139,14 @@ public class BDialog extends WindowWidget
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
     ArrayList ls = new ArrayList(3);
     if (menubar != null)
       ls.add(menubar);
     if (content != null)
       ls.add(content);
-    return ls.iterator();
+    return ls;
   }
   
   /**

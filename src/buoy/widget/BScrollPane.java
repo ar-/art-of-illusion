@@ -416,7 +416,7 @@ public class BScrollPane extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
     ArrayList ls = new ArrayList(5);
     if (content != null)
@@ -427,7 +427,7 @@ public class BScrollPane extends WidgetContainer
       ls.add(colHeader);
     ls.add(hscroll);
     ls.add(vscroll);
-    return ls.iterator();
+    return ls;
   }
   
   /**

@@ -1,6 +1,5 @@
 package buoy.widget;
 
-import buoy.event.*;
 import java.util.*;
 
 /**
@@ -34,7 +33,7 @@ public abstract class WidgetContainer extends Widget
    * Get an Iterator listing all child Widgets.
    */
   
-  public abstract Iterator getChildren();
+  public abstract Collection getChildren();
   
   /**
    * Remove a child Widget from this container.

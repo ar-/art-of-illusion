@@ -254,13 +254,13 @@ public class BSplitPane extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
     ArrayList ls = new ArrayList(2);
     for (int i = 0; i < child.length; i++)
       if (child[i] != null)
         ls.add(child[i]);
-    return ls.iterator();
+    return ls;
   }
   
   /**

@@ -1,6 +1,5 @@
 package buoy.widget;
 
-import buoy.event.*;
 import buoy.internal.*;
 import buoy.xml.*;
 import buoy.xml.delegate.*;
@@ -94,12 +93,12 @@ public class FormContainer extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
-    ArrayList list = new ArrayList();
+    ArrayList list = new ArrayList(child.size());
     for (int i = 0; i < child.size(); i++)
       list.add(((ChildInfo) child.get(i)).widget);
-    return list.iterator();
+    return list;
   }
   
   /**

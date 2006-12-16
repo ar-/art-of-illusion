@@ -110,9 +110,9 @@ public class BTabbedPane extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
-    return child.iterator();
+    return new ArrayList(child);
   }
   
   /**

@@ -153,12 +153,12 @@ public class BOutline extends WidgetContainer
    * Get an Iterator listing all child Widgets.
    */
   
-  public Iterator getChildren()
+  public Collection getChildren()
   {
     ArrayList ls = new ArrayList(1);
     if (content != null)
       ls.add(content);
-    return ls.iterator();
+    return ls;
   }
   
   /**
