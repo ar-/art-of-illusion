@@ -30,7 +30,7 @@ public abstract class WidgetContainer extends Widget
   public abstract int getChildCount();
   
   /**
-   * Get an Iterator listing all child Widgets.
+   * Get a Collection containing all child Widgets of this container.
    */
   
   public abstract Collection getChildren();

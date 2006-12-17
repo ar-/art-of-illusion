@@ -139,7 +139,7 @@ public class BPopupMenu extends WidgetContainer implements MenuWidget
   }
   
   /**
-   * Get an Iterator listing all child Widgets.
+   * Get a Collection containing all child Widgets of this container.
    */
   
   public Collection getChildren()
