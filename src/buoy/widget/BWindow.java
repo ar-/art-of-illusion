@@ -2,8 +2,6 @@ package buoy.widget;
 
 import buoy.event.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.*;
 import javax.swing.*;
 
@@ -36,19 +34,6 @@ public class BWindow extends WindowWidget
   {
     component = createComponent();
     ((JWindow) component).getContentPane().setLayout(null);
-    component.addComponentListener(new ComponentAdapter() {
-      public void componentResized(ComponentEvent ev)
-      {
-        if (lastSetSize == null || !lastSetSize.equals(component.getSize()))
-        {
-          lastSetSize = null;
-          layoutChildren();
-          BWindow.this.dispatchEvent(new WindowResizedEvent(BWindow.this));
-        }
-        else
-          lastSetSize = null;
-      }
-    });
   }
   
   /**
@@ -129,6 +114,23 @@ public class BWindow extends WindowWidget
     public void paintComponent(Graphics g)
     {
       BWindow.this.dispatchEvent(new RepaintEvent(BWindow.this, (Graphics2D) g));
+    }
+
+    public void validate()
+    {
+      super.validate();
+      layoutChildren();
+      if (!component.getSize().equals(lastSize))
+      {
+        lastSize = component.getSize();
+        EventQueue.invokeLater(new Runnable()
+        {
+          public void run()
+          {
+            BWindow.this.dispatchEvent(new WindowResizedEvent(BWindow.this));
+          }
+        });
+      }
     }
   }
 }

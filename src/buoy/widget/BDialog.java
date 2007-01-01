@@ -2,8 +2,6 @@ package buoy.widget;
 
 import buoy.event.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.*;
 import javax.swing.*;
 
@@ -110,19 +108,6 @@ public class BDialog extends WindowWidget
   private void initInternal()
   {
     ((JDialog) component).getContentPane().setLayout(null);
-    component.addComponentListener(new ComponentAdapter() {
-      public void componentResized(ComponentEvent ev)
-      {
-        if (lastSetSize == null || !lastSetSize.equals(component.getSize()))
-        {
-          lastSetSize = null;
-          layoutChildren();
-          BDialog.this.dispatchEvent(new WindowResizedEvent(BDialog.this));
-        }
-        else
-          lastSetSize = null;
-      }
-    });
     ((JDialog) component).setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
   }
 
@@ -324,6 +309,23 @@ public class BDialog extends WindowWidget
     public void paintComponent(Graphics g)
     {
       BDialog.this.dispatchEvent(new RepaintEvent(BDialog.this, (Graphics2D) g));
+    }
+
+    public void validate()
+    {
+      super.validate();
+      layoutChildren();
+      if (!component.getSize().equals(lastSize))
+      {
+        lastSize = component.getSize();
+        EventQueue.invokeLater(new Runnable()
+        {
+          public void run()
+          {
+            BDialog.this.dispatchEvent(new WindowResizedEvent(BDialog.this));
+          }
+        });
+      }
     }
   }
 }

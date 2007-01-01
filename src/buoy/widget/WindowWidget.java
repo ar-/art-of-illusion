@@ -13,7 +13,7 @@ import javax.swing.*;
 public abstract class WindowWidget extends WidgetContainer
 {
   protected Widget content;
-  protected Dimension lastSetSize;
+  protected Dimension lastSize;
 
   private Boolean mockVisible;
   private BButton defaultButton;
@@ -27,9 +27,8 @@ public abstract class WindowWidget extends WidgetContainer
   {
     if (encodingInProgress.get() != Boolean.TRUE && !component.isDisplayable())
       component.addNotify();
-    lastSetSize = new Dimension(bounds.width, bounds.height);
+    lastSize = new Dimension(bounds.width, bounds.height);
     component.setBounds(bounds);
-    layoutChildren();
   }
   
   /**
@@ -90,9 +89,10 @@ public abstract class WindowWidget extends WidgetContainer
   {
     if (content != null)
     {
-      component.validate();
+      Container contentPane = ((RootPaneContainer) component).getContentPane();
+      contentPane.validate();
       Dimension max = content.getMaximumSize();
-      Dimension total = ((RootPaneContainer) component).getContentPane().getSize();
+      Dimension total = contentPane.getSize();
       content.component.setBounds(0, 0, Math.min(max.width, total.width), Math.min(max.height, total.height));
       if (content instanceof WidgetContainer)
         ((WidgetContainer) content).layoutChildren();

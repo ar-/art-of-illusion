@@ -2,8 +2,6 @@ package buoy.widget;
 
 import buoy.event.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.*;
 import javax.swing.*;
 
@@ -39,19 +37,6 @@ public class BFrame extends WindowWidget
   {
     component = createComponent();
     ((JFrame) component).getContentPane().setLayout(null);
-    component.addComponentListener(new ComponentAdapter() {
-      public void componentResized(ComponentEvent ev)
-      {
-        if (lastSetSize == null || !lastSetSize.equals(component.getSize()))
-        {
-          lastSetSize = null;
-          layoutChildren();
-          BFrame.this.dispatchEvent(new WindowResizedEvent(BFrame.this));
-        }
-        else
-          lastSetSize = null;
-      }
-    });
     ((JFrame) component).setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
   }
 
@@ -275,7 +260,7 @@ public class BFrame extends WindowWidget
       jf.setExtendedState(state|Frame.MAXIMIZED_BOTH);
     else
       jf.setExtendedState(state-state&Frame.MAXIMIZED_BOTH);
-    lastSetSize = component.getSize();
+    lastSize = component.getSize();
   }
 
   /**
@@ -301,6 +286,23 @@ public class BFrame extends WindowWidget
     public void paintComponent(Graphics g)
     {
       BFrame.this.dispatchEvent(new RepaintEvent(BFrame.this, (Graphics2D) g));
+    }
+
+    public void validate()
+    {
+      super.validate();
+      layoutChildren();
+      if (!component.getSize().equals(lastSize))
+      {
+        lastSize = component.getSize();
+        EventQueue.invokeLater(new Runnable()
+        {
+          public void run()
+          {
+            BFrame.this.dispatchEvent(new WindowResizedEvent(BFrame.this));
+          }
+        });
+      }
     }
   }
 }
