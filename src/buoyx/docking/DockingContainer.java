@@ -246,6 +246,40 @@ public class DockingContainer extends WidgetContainer
       rebuildContents(true);
   }
 
+  /**
+   * Reset the positions of the dividers within a single tab based on the preferred sizes of the
+   * DockableWidgets it contains.
+   */
+
+  public void resetToPreferredSizes(int tabIndex)
+  {
+    Widget child;
+    if (tabs == null)
+    {
+      int dockPosition = (tabPosition == BTabbedPane.BOTTOM || tabPosition == BTabbedPane.RIGHT ? 1 : 0);
+      child = splitPane.getChild(dockPosition);
+    }
+    else
+    {
+      child = tabs.getChild(tabIndex);
+    }
+    if (child != null)
+      recursivelyResetToPreferredSizes(child.getComponent());
+  }
+
+  private void recursivelyResetToPreferredSizes(Component c)
+  {
+    if (c instanceof SingleWidgetPanel)
+      c = ((SingleWidgetPanel) c).getComponent(0);
+    if (c instanceof JSplitPane)
+    {
+      JSplitPane js = (JSplitPane) c;
+      js.resetToPreferredSizes();
+      recursivelyResetToPreferredSizes(js.getTopComponent());
+      recursivelyResetToPreferredSizes(js.getBottomComponent());
+    }
+  }
+
   Rectangle getTabBounds(int index)
   {
     if (tabs == null)
