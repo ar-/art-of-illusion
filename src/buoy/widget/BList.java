@@ -64,7 +64,7 @@ public class BList extends Widget
    * are returned by the Collection's Iterator.
    */
   
-  public BList(Collection contents[])
+  public BList(Collection contents)
   {
     this();
     setContents(contents);

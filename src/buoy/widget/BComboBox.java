@@ -57,7 +57,7 @@ public class BComboBox extends Widget
    * added in the order they are returned by the Collection's Iterator.
    */
   
-  public BComboBox(Collection contents[])
+  public BComboBox(Collection contents)
   {
     this();
     setContents(contents);
