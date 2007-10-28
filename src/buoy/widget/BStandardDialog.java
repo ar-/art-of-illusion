@@ -149,7 +149,7 @@ public class BStandardDialog
   
   public void showMessageDialog(Widget parent)
   {
-    JOptionPane.showMessageDialog(parent == null ? null : parent.component, buildMessage(message), title, style.value);
+    JOptionPane.showMessageDialog(parent == null ? null : parent.getComponent(), buildMessage(message), title, style.value);
   }
     
   /**
@@ -166,7 +166,7 @@ public class BStandardDialog
   {
     if (options.length != 2 && options.length != 3)
       throw new IllegalArgumentException("Number of options must be 2 or 3");
-    int response = JOptionPane.showOptionDialog(parent == null ? null : parent.component, buildMessage(message), title,
+    int response = JOptionPane.showOptionDialog(parent == null ? null : parent.getComponent(), buildMessage(message), title,
         (options.length == 2 ? JOptionPane.YES_NO_OPTION : JOptionPane.YES_NO_CANCEL_OPTION),
         style.value, null, options, defaultVal);
     if (response == JOptionPane.YES_OPTION)
@@ -190,7 +190,7 @@ public class BStandardDialog
   
   public String showInputDialog(Widget parent, String options[], String defaultVal)
   {
-    return (String) JOptionPane.showInputDialog(parent == null ? null : parent.component, buildMessage(message), title,
+    return (String) JOptionPane.showInputDialog(parent == null ? null : parent.getComponent(), buildMessage(message), title,
         style.value, null, options, defaultVal);
   }
   

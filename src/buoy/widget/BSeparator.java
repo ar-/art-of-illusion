@@ -53,13 +53,18 @@ public class BSeparator extends Widget implements MenuWidget
     return new JSeparator();
   }
 
+  public JSeparator getComponent()
+  {
+    return (JSeparator) component;
+  }
+
   /**
    * Get the orientation of this separator.
    */
 
   public Orientation getOrientation()
   {
-    int orientation = ((JSeparator) getComponent()).getOrientation();
+    int orientation = getComponent().getOrientation();
     return (orientation == SwingConstants.HORIZONTAL ? HORIZONTAL : VERTICAL);
   }
 
@@ -69,7 +74,7 @@ public class BSeparator extends Widget implements MenuWidget
 
   public void setOrientation(Orientation orientation)
   {
-    ((JSeparator) getComponent()).setOrientation(orientation.value);
+    getComponent().setOrientation(orientation.value);
   }
 
   /**

@@ -30,7 +30,12 @@ public class CustomWidget extends Widget
     component = new CustomWidgetComponent();
     opaque = true;
   }
-  
+
+  public Component getComponent()
+  {
+    return (JComponent) component;
+  }
+
   /**
    * Set the smallest size at which this Widget can reasonably be drawn.  When a WidgetContainer lays out
    * its contents, it will attempt never to make this Widget smaller than its minimum size.
@@ -38,7 +43,7 @@ public class CustomWidget extends Widget
   
   public void setMinimumSize(Dimension size)
   {
-    ((JComponent) component).setMinimumSize(size);
+    getComponent().setMinimumSize(size);
     invalidateSize();
   }
   
@@ -49,7 +54,7 @@ public class CustomWidget extends Widget
   
   public void setMaximumSize(Dimension size)
   {
-    ((JComponent) component).setMaximumSize(size);
+    getComponent().setMaximumSize(size);
     invalidateSize();
   }
 
@@ -60,7 +65,7 @@ public class CustomWidget extends Widget
   
   public void setPreferredSize(Dimension size)
   {
-    ((JComponent) component).setPreferredSize(size);
+    getComponent().setPreferredSize(size);
     invalidateSize();
   }
   

@@ -61,7 +61,7 @@ public class BTable extends Widget
 {
   protected DefaultTableModel defaultModel;
   protected BTableHeader tableHeader;
-  protected ArrayList columnEditable;
+  protected ArrayList<Boolean> columnEditable;
   
   public static final SelectionMode SELECT_NONE = new SelectionMode();
   public static final SelectionMode SELECT_ROWS = new SelectionMode();
@@ -89,17 +89,16 @@ public class BTable extends Widget
     };
     component = createComponent();
     tableHeader = new BTableHeader();
-    columnEditable = new ArrayList();
+    columnEditable = new ArrayList<Boolean>();
     ListSelectionListener lsl = new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent ev)
       {
         dispatchEvent(new SelectionChangedEvent(BTable.this, ev.getValueIsAdjusting()));
       }
     };
-    JTable table = (JTable) component;
-    table.getSelectionModel().addListSelectionListener(lsl);
-    table.getColumnModel().getSelectionModel().addListSelectionListener(lsl);
-    table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+    getComponent().getSelectionModel().addListSelectionListener(lsl);
+    getComponent().getColumnModel().getSelectionModel().addListSelectionListener(lsl);
+    getComponent().putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
   }
   
   /**
@@ -140,7 +139,7 @@ public class BTable extends Widget
   public BTable(TableModel model)
   {
     this();
-    getTable().setModel(model);
+    getComponent().setModel(model);
   }
   
   /**
@@ -165,7 +164,12 @@ public class BTable extends Widget
       }
     };
   }
-  
+
+  public JTable getComponent()
+  {
+    return (JTable) component;
+  }
+
   /**
    * Get the Widget that displays this table's column headers.
    */
@@ -181,7 +185,7 @@ public class BTable extends Widget
   
   public TableModel getModel()
   {
-    return getTable().getModel();
+    return getComponent().getModel();
   }
   
   /**
@@ -190,7 +194,7 @@ public class BTable extends Widget
   
   public void setModel(TableModel model)
   {
-    getTable().setModel(model);
+    getComponent().setModel(model);
     invalidateSize();
   }
   
@@ -242,7 +246,7 @@ public class BTable extends Widget
   public void removeColumn(int index)
   {
     int columns = getColumnCount();
-    Vector columnNames = new Vector();
+    Vector<Object> columnNames = new Vector<Object>();
     for (int i = 0; i < columns; i++)
       if (i != index)
         columnNames.add(getColumnHeader(i));
@@ -339,7 +343,7 @@ public class BTable extends Widget
   
   public int getRowCount()
   {
-    return getTable().getRowCount();
+    return getComponent().getRowCount();
   }
   
   /**
@@ -348,7 +352,7 @@ public class BTable extends Widget
   
   public int getColumnCount()
   {
-    return getTable().getColumnCount();
+    return getComponent().getColumnCount();
   }
   
   /**
@@ -390,7 +394,7 @@ public class BTable extends Widget
   
   public Object getCellValue(int row, int col)
   {
-    return getTable().getModel().getValueAt(row, col);
+    return getComponent().getModel().getValueAt(row, col);
   }
   
   /**
@@ -403,16 +407,7 @@ public class BTable extends Widget
   
   public void setCellValue(int row, int col, Object value)
   {
-    getTable().getModel().setValueAt(value, row, col);
-  }
-
-  /**
-   * Get the JTable which is the component for this Widget.
-   */
-
-  private JTable getTable()
-  {
-    return (JTable) component;
+    getComponent().getModel().setValueAt(value, row, col);
   }
 
   /**
@@ -423,7 +418,7 @@ public class BTable extends Widget
   
   private TableColumn getColumn(int col)
   {
-    JTable table = getTable();
+    JTable table = getComponent();
     col = table.convertColumnIndexToView(col);
     return table.getColumnModel().getColumn(col);
   }
@@ -459,7 +454,7 @@ public class BTable extends Widget
   
   public int getRowHeight(int row)
   {
-    return getTable().getRowHeight(row);
+    return getComponent().getRowHeight(row);
   }
   
   /**
@@ -471,7 +466,7 @@ public class BTable extends Widget
   
   public void setRowHeight(int row, int height)
   {
-    getTable().setRowHeight(row, height);
+    getComponent().setRowHeight(row, height);
     invalidateSize();
   }
   
@@ -512,7 +507,7 @@ public class BTable extends Widget
       tc.sizeWidthToFit();
     else
     {
-      JTableHeader th = getTable().getTableHeader();
+      JTableHeader th = getComponent().getTableHeader();
       FontMetrics fm = th.getFontMetrics(th.getFont());
       tc.setPreferredWidth(fm.stringWidth(tc.getHeaderValue().toString())+10);
     }
@@ -525,7 +520,7 @@ public class BTable extends Widget
   
   public boolean getColumnsResizable()
   {
-    return getTable().getTableHeader().getResizingAllowed();
+    return getComponent().getTableHeader().getResizingAllowed();
   }
   
   /**
@@ -534,7 +529,7 @@ public class BTable extends Widget
   
   public void setColumnsResizable(boolean resizable)
   {
-    getTable().getTableHeader().setResizingAllowed(resizable);
+    getComponent().getTableHeader().setResizingAllowed(resizable);
   }
   
   /**
@@ -543,7 +538,7 @@ public class BTable extends Widget
   
   public boolean getColumnsReorderable()
   {
-    return getTable().getTableHeader().getReorderingAllowed();
+    return getComponent().getTableHeader().getReorderingAllowed();
   }
   
   /**
@@ -552,7 +547,7 @@ public class BTable extends Widget
   
   public void setColumnsReorderable(boolean reorderable)
   {
-    getTable().getTableHeader().setReorderingAllowed(reorderable);
+    getComponent().getTableHeader().setReorderingAllowed(reorderable);
   }
   
   /**
@@ -562,12 +557,11 @@ public class BTable extends Widget
   
   public SelectionMode getSelectionMode()
   {
-    JTable table = (JTable) component;
-    if (table.getCellSelectionEnabled())
+    if (getComponent().getCellSelectionEnabled())
       return SELECT_CELLS;
-    if (table.getColumnSelectionAllowed())
+    if (getComponent().getColumnSelectionAllowed())
       return SELECT_COLUMNS;
-    if (table.getRowSelectionAllowed())
+    if (getComponent().getRowSelectionAllowed())
       return SELECT_ROWS;
     return SELECT_NONE;
   }
@@ -579,9 +573,8 @@ public class BTable extends Widget
   
   public void setSelectionMode(SelectionMode mode)
   {
-    JTable table = (JTable) component;
-    table.setColumnSelectionAllowed(mode == SELECT_COLUMNS || mode == SELECT_CELLS);
-    table.setRowSelectionAllowed(mode == SELECT_ROWS || mode == SELECT_CELLS);
+    getComponent().setColumnSelectionAllowed(mode == SELECT_COLUMNS || mode == SELECT_CELLS);
+    getComponent().setRowSelectionAllowed(mode == SELECT_ROWS || mode == SELECT_CELLS);
   }
 
   /**
@@ -590,7 +583,7 @@ public class BTable extends Widget
   
   public boolean isMultipleSelectionEnabled()
   {
-    return (getTable().getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_SELECTION);
+    return (getComponent().getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_SELECTION);
   }
   
   /**
@@ -599,7 +592,7 @@ public class BTable extends Widget
   
   public void setMultipleSelectionEnabled(boolean multiple)
   {
-    getTable().setSelectionMode(multiple ? ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
+    getComponent().setSelectionMode(multiple ? ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
   }
   
   /**
@@ -613,7 +606,7 @@ public class BTable extends Widget
   
   public boolean isRowSelected(int row)
   {
-    return getTable().isRowSelected(row);
+    return getComponent().isRowSelected(row);
   }
   
   /**
@@ -626,9 +619,9 @@ public class BTable extends Widget
   public void setRowSelected(int row, boolean selected)
   {
     if (selected)
-      getTable().addRowSelectionInterval(row, row);
+      getComponent().addRowSelectionInterval(row, row);
     else
-      getTable().removeRowSelectionInterval(row, row);
+      getComponent().removeRowSelectionInterval(row, row);
   }
   
   /**
@@ -641,7 +634,7 @@ public class BTable extends Widget
   
   public int[] getSelectedRows()
   {
-    return getTable().getSelectedRows();
+    return getComponent().getSelectedRows();
   }
   
   /**
@@ -655,7 +648,7 @@ public class BTable extends Widget
   
   public boolean isColumnSelected(int col)
   {
-    return getTable().isColumnSelected(col);
+    return getComponent().isColumnSelected(col);
   }
   
   /**
@@ -668,9 +661,9 @@ public class BTable extends Widget
   public void setColumnSelected(int col, boolean selected)
   {
     if (selected)
-      getTable().addColumnSelectionInterval(col, col);
+      getComponent().addColumnSelectionInterval(col, col);
     else
-      getTable().removeColumnSelectionInterval(col, col);
+      getComponent().removeColumnSelectionInterval(col, col);
   }
   
   /**
@@ -683,7 +676,7 @@ public class BTable extends Widget
   
   public int[] getSelectedColumns()
   {
-    return getTable().getSelectedColumns();
+    return getComponent().getSelectedColumns();
   }
   
   /**
@@ -695,7 +688,7 @@ public class BTable extends Widget
   
   public boolean isCellSelected(int row, int col)
   {
-    return getTable().isCellSelected(row, col);
+    return getComponent().isCellSelected(row, col);
   }
   
   /**
@@ -710,13 +703,13 @@ public class BTable extends Widget
   {
     if (selected)
     {
-      getTable().addRowSelectionInterval(row, row);
-      getTable().addColumnSelectionInterval(col, col);
+      getComponent().addRowSelectionInterval(row, row);
+      getComponent().addColumnSelectionInterval(col, col);
     }
     else
     {
-      getTable().removeRowSelectionInterval(row, row);
-      getTable().removeColumnSelectionInterval(col, col);
+      getComponent().removeRowSelectionInterval(row, row);
+      getComponent().removeColumnSelectionInterval(col, col);
     }
   }
   
@@ -728,18 +721,17 @@ public class BTable extends Widget
   
   public Point[] getSelectedCells()
   {
-    JTable table = (JTable) component;
     int rows[], cols[];
-    if (table.getRowSelectionAllowed())
-      rows = table.getSelectedRows();
+    if (getComponent().getRowSelectionAllowed())
+      rows = getComponent().getSelectedRows();
     else
     {
       rows = new int [getRowCount()];
       for (int i = 0; i < rows.length; i++)
         rows[i] = i;
     }
-    if (table.getColumnSelectionAllowed())
-      cols = table.getSelectedColumns();
+    if (getComponent().getColumnSelectionAllowed())
+      cols = getComponent().getSelectedColumns();
     else
     {
       cols = new int [getColumnCount()];
@@ -759,7 +751,7 @@ public class BTable extends Widget
   
   public void clearSelection()
   {
-    getTable().clearSelection();
+    getComponent().clearSelection();
   }
   
   /**
@@ -771,7 +763,7 @@ public class BTable extends Widget
   
   public int findRow(Point pos)
   {
-    return getTable().rowAtPoint(pos);
+    return getComponent().rowAtPoint(pos);
   }
   
   /**
@@ -783,7 +775,7 @@ public class BTable extends Widget
   
   public int findColumn(Point pos)
   {
-    return getTable().columnAtPoint(pos);
+    return getComponent().columnAtPoint(pos);
   }
   
   /**
@@ -795,7 +787,7 @@ public class BTable extends Widget
   
   public void editCellAt(int row, int col)
   {
-    getTable().editCellAt(row, col);
+    getComponent().editCellAt(row, col);
   }
   
   /**
@@ -804,7 +796,7 @@ public class BTable extends Widget
   
   public boolean getShowHorizontalLines()
   {
-    return getTable().getShowHorizontalLines();
+    return getComponent().getShowHorizontalLines();
   }
   
   /**
@@ -813,7 +805,7 @@ public class BTable extends Widget
   
   public void setShowHorizontalLines(boolean show)
   {
-    getTable().setShowHorizontalLines(show);
+    getComponent().setShowHorizontalLines(show);
   }
   
   /**
@@ -822,7 +814,7 @@ public class BTable extends Widget
   
   public boolean getShowVerticalLines()
   {
-    return getTable().getShowVerticalLines();
+    return getComponent().getShowVerticalLines();
   }
   
   /**
@@ -831,7 +823,7 @@ public class BTable extends Widget
   
   public void setShowVerticalLines(boolean show)
   {
-    getTable().setShowVerticalLines(show);
+    getComponent().setShowVerticalLines(show);
   }
 
   /**
@@ -845,9 +837,8 @@ public class BTable extends Widget
 
   public void scrollToCell(int row, int col)
   {
-    JTable table = (JTable) component;
-    Rectangle bounds = table.getCellRect(row, col, true);
-    table.scrollRectToVisible(bounds);
+    Rectangle bounds = getComponent().getCellRect(row, col, true);
+    getComponent().scrollRectToVisible(bounds);
   }
 
   /**
@@ -862,7 +853,7 @@ public class BTable extends Widget
     {
       BScrollPane scroll = (BScrollPane) container;
       scroll.setColHeader(tableHeader);
-      getTable().setAutoResizeMode(scroll.getHorizontalScrollbarPolicy() == BScrollPane.SCROLLBAR_NEVER ? JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS : JTable.AUTO_RESIZE_OFF);
+      getComponent().setAutoResizeMode(scroll.getHorizontalScrollbarPolicy() == BScrollPane.SCROLLBAR_NEVER ? JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS : JTable.AUTO_RESIZE_OFF);
     }
   }
   
@@ -874,18 +865,23 @@ public class BTable extends Widget
   {
     private BTableHeader()
     {
-      component = ((JTable) BTable.this.component).getTableHeader();
-      component.addComponentListener(new ComponentAdapter() {
+      component = ((JTable) BTable.this.getComponent()).getTableHeader();
+      getComponent().addComponentListener(new ComponentAdapter() {
         public void componentResized(ComponentEvent ev)
         {
           // When the user resizes a column by hand, update the BScrollPane.
           
-          if (((JTableHeader) component).getResizingColumn() != null && getParent() instanceof BScrollPane)
+          if (getComponent().getResizingColumn() != null && getParent() instanceof BScrollPane)
             getParent().layoutChildren();
         }
       });
     }
-    
+
+    public JTableHeader getComponent()
+    {
+      return (JTableHeader) component;
+    }
+
     public BTable getTable()
     {
       return BTable.this;

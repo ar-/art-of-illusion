@@ -51,7 +51,7 @@ public class BRadioButton extends Widget
   public BRadioButton(String text, boolean state, RadioButtonGroup group)
   {
     component = createComponent(text, state);
-    ((JRadioButton) component).addActionListener(new ActionListener() {
+    getComponent().addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ev)
       {
         dispatchEvent(new ValueChangedEvent(BRadioButton.this));
@@ -73,14 +73,19 @@ public class BRadioButton extends Widget
   {
     return new JRadioButton(text, state);
   }
-  
+
+  public JRadioButton getComponent()
+  {
+    return (JRadioButton) component;
+  }
+
   /**
    * Get the selection state of this radio button.
    */
   
   public boolean getState()
   {
-    return ((JRadioButton) component).isSelected();
+    return getComponent().isSelected();
   }
   
   /**
@@ -93,7 +98,7 @@ public class BRadioButton extends Widget
     if (selected)
       group.setSelection(this);
     else
-      ((JRadioButton) component).setSelected(selected);
+      getComponent().setSelected(selected);
   }
   
   /**
@@ -102,7 +107,7 @@ public class BRadioButton extends Widget
   
   public String getText()
   {
-    return ((JRadioButton) component).getText();
+    return getComponent().getText();
   }
   
   /**
@@ -111,7 +116,7 @@ public class BRadioButton extends Widget
   
   public void setText(String text)
   {
-    ((JRadioButton) component).setText(text);
+    getComponent().setText(text);
     invalidateSize();
   }
   

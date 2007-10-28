@@ -66,9 +66,14 @@ public class BPasswordField extends BTextField
    * in BTextField.
    */
   
-  protected JTextField createComponent()
+  protected JPasswordField createComponent()
   {
     return new JPasswordField();
+  }
+
+  public JPasswordField getComponent()
+  {
+    return (JPasswordField) component;
   }
 
   /**
@@ -77,7 +82,7 @@ public class BPasswordField extends BTextField
   
   public char getEchoChar()
   {
-    return ((JPasswordField) component).getEchoChar();
+    return getComponent().getEchoChar();
   }
   
   /**
@@ -86,7 +91,7 @@ public class BPasswordField extends BTextField
   
   public void setEchoChar(char c)
   {
-    ((JPasswordField) component).setEchoChar(c);
+    getComponent().setEchoChar(c);
   }
 
   /**
@@ -95,6 +100,6 @@ public class BPasswordField extends BTextField
   
   public String getText()
   {
-    return new String(((JPasswordField) component).getPassword());
+    return new String(getComponent().getPassword());
   }
 }

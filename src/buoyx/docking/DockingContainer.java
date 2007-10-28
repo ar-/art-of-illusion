@@ -30,7 +30,7 @@ import java.awt.*;
 public class DockingContainer extends WidgetContainer
 {
   private Widget content;
-  private ArrayList childrenInTab;
+  private ArrayList<ArrayList<DockableWidget>> childrenInTab;
   private TabPosition tabPosition;
   private BSplitPane splitPane;
   private BTabbedPane tabs;
@@ -47,9 +47,9 @@ public class DockingContainer extends WidgetContainer
     splitPane = new BSplitPane(BSplitPane.HORIZONTAL);
     ((JSplitPane) splitPane.getComponent()).setBorder(null);
     tabPosition = BTabbedPane.TOP;
-    ((Container) component).add(splitPane.getComponent());
+    ((Container) getComponent()).add(splitPane.getComponent());
     setAsParent(splitPane);
-    childrenInTab = new ArrayList();
+    childrenInTab = new ArrayList<ArrayList<DockableWidget>>();
     visibleDividerSize = ((JSplitPane) splitPane.getComponent()).getDividerSize();
   }
 
@@ -103,7 +103,7 @@ public class DockingContainer extends WidgetContainer
   {
     if (widget.getParent() != null)
       widget.getParent().remove(widget);
-    ArrayList newTab = new ArrayList();
+    ArrayList<DockableWidget> newTab = new ArrayList<DockableWidget>();
     newTab.add(widget);
     childrenInTab.add(newTab);
     rebuildContents(getDockedChildCount() > 1);
@@ -126,7 +126,7 @@ public class DockingContainer extends WidgetContainer
       addDockableWidget(widget);
       return;
     }
-    ((ArrayList) childrenInTab.get(tab)).add(indexInTab, widget);
+    childrenInTab.get(tab).add(indexInTab, widget);
     rebuildContents(getDockedChildCount() > 1);
   }
 
@@ -138,7 +138,7 @@ public class DockingContainer extends WidgetContainer
   public int getChildTabIndex(DockableWidget widget)
   {
     for (int i = 0; i < childrenInTab.size(); i++)
-      if (((ArrayList) childrenInTab.get(i)).contains(widget))
+      if (childrenInTab.get(i).contains(widget))
         return i;
     return -1;
   }
@@ -150,9 +150,9 @@ public class DockingContainer extends WidgetContainer
 
   public int getChildIndexInTab(DockableWidget widget)
   {
-    for (int i = 0; i < childrenInTab.size(); i++)
+    for (ArrayList<DockableWidget> children : childrenInTab)
     {
-      int index = ((ArrayList) childrenInTab.get(i)).indexOf(widget);
+      int index = children.indexOf(widget);
       if (index > -1)
         return index;
     }
@@ -174,7 +174,7 @@ public class DockingContainer extends WidgetContainer
 
   public int getTabChildCount(int tabIndex)
   {
-    return ((ArrayList) childrenInTab.get(tabIndex)).size();
+    return childrenInTab.get(tabIndex).size();
   }
 
   /**
@@ -341,13 +341,9 @@ public class DockingContainer extends WidgetContainer
 
     // Mark every child as not having a parent, so they won't get confused when we add them again.
 
-    Iterator allChildren = getChildren().iterator();
-    while (allChildren.hasNext())
-    {
-      Widget child = (Widget) allChildren.next();
+    for (Widget child : getChildren())
       if (child != content)
         removeAsParent(child);
-    }
     splitPane.remove(1-mainPosition);
 
     // Work out the contents for each tab.
@@ -363,16 +359,16 @@ public class DockingContainer extends WidgetContainer
     Widget tabContents[] = new Widget [childrenInTab.size()];
     for (int i = 0; i < tabContents.length; i++)
     {
-      ArrayList children = (ArrayList) childrenInTab.get(i);
+      ArrayList<DockableWidget> children = childrenInTab.get(i);
       if (children.size() == 1)
-        tabContents[i] = (Widget) children.get(0);
+        tabContents[i] = children.get(0);
       else
       {
 
         BSplitPane split = new BSplitPane(splitOrient);
         split.setResizeWeight(1.0/children.size());
         tabContents[i] = split;
-        split.add((Widget) children.get(0), 0);
+        split.add(children.get(0), 0);
         for (int j = 1; j < children.size()-1; j++)
         {
           BSplitPane nextSplit = new BSplitPane(splitOrient);
@@ -380,9 +376,9 @@ public class DockingContainer extends WidgetContainer
           nextSplit.setResizeWeight(1.0/(children.size()-j));
           split.add(nextSplit, 1);
           split = nextSplit;
-          split.add((Widget) children.get(j), 0);
+          split.add(children.get(j), 0);
         }
-        split.add((Widget) children.get(children.size()-1), 1);
+        split.add(children.get(children.size()-1), 1);
       }
     }
 
@@ -402,13 +398,13 @@ public class DockingContainer extends WidgetContainer
       tabs.addEventLink(MouseReleasedEvent.class, manager, "mouseReleased");
       for (int i = 0; i < tabContents.length; i++)
       {
-        ArrayList children = (ArrayList) childrenInTab.get(i);
+        ArrayList<DockableWidget> children = childrenInTab.get(i);
         StringBuffer label = new StringBuffer();
         for (int j = 0; j < children.size(); j++)
         {
           if (j > 0)
             label.append(", ");
-          label.append(((DockableWidget) children.get(j)).getLabel());
+          label.append(children.get(j).getLabel());
         }
         tabs.add(tabContents[i], label.toString());
       }
@@ -418,12 +414,9 @@ public class DockingContainer extends WidgetContainer
     // Reestablish that all the children belong to this container, not to the internal
     // BSplitPanes and BTabbedPane.
 
-    for (int i = 0; i < childrenInTab.size(); i++)
-    {
-      ArrayList children = (ArrayList) childrenInTab.get(i);
-      for (int j = 0; j < children.size(); j++)
-        setAsParent((Widget) children.get(j));
-    }
+    for (ArrayList<DockableWidget> children : childrenInTab)
+      for (DockableWidget widget : children)
+        setAsParent(widget);
     if (preserveSize)
       splitPane.setDividerLocation(splitLocation);
     else
@@ -450,8 +443,8 @@ public class DockingContainer extends WidgetContainer
   public int getChildCount()
   {
     int count = (content == null ? 0 : 1);
-    for (int i = 0; i < childrenInTab.size(); i++)
-      count += ((ArrayList) childrenInTab.get(i)).size();
+    for (ArrayList<DockableWidget> tab : childrenInTab)
+      count += tab.size();
     return count;
   }
 
@@ -460,17 +453,13 @@ public class DockingContainer extends WidgetContainer
     return getChildCount()-(content == null ? 0 : 1);
   }
 
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList children = new ArrayList(0);
+    ArrayList<Widget> children = new ArrayList<Widget>(0);
     if (content != null)
       children.add(content);
-    for (int i = 0; i < childrenInTab.size(); i++)
-    {
-      ArrayList thisTab = (ArrayList) childrenInTab.get(i);
-      for (int j = 0; j < thisTab.size(); j++)
-        children.add((Widget) thisTab.get(j));
-    }
+    for (ArrayList<DockableWidget> thisTab : childrenInTab)
+      children.addAll(thisTab);
     return children;
   }
 
@@ -511,12 +500,9 @@ public class DockingContainer extends WidgetContainer
 
   public void removeAll()
   {
-    for (int i = 0; i < childrenInTab.size(); i++)
-    {
-      ArrayList thisTab = (ArrayList) childrenInTab.get(i);
-      for (int j = 0; j < thisTab.size(); j++)
-        removeAsParent((Widget) thisTab.get(j));
-    }
+    for (ArrayList<DockableWidget> thisTab : childrenInTab)
+      for (DockableWidget widget : thisTab)
+        removeAsParent(widget);
     childrenInTab.clear();
     setContent(null);
 

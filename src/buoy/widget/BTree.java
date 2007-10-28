@@ -100,7 +100,7 @@ public class BTree extends Widget
   public BTree(TreeModel model)
   {
     component = createComponent(model);
-    ((JTree) component).addTreeSelectionListener(new TreeSelectionListener() {
+    getComponent().addTreeSelectionListener(new TreeSelectionListener() {
       public void valueChanged(TreeSelectionEvent ev)
       {
         if (suppressEvents == 0)
@@ -113,7 +113,7 @@ public class BTree extends Widget
         updateScrollPane();
       }
     };
-    ((JTree) component).addTreeExpansionListener(new TreeExpansionListener() {
+    getComponent().addTreeExpansionListener(new TreeExpansionListener() {
       public void treeCollapsed(TreeExpansionEvent event)
       {
         SwingUtilities.invokeLater(scrollPaneUpdater);
@@ -142,9 +142,9 @@ public class BTree extends Widget
     model.addTreeModelListener(modelListener);
     if (model instanceof DefaultTreeModel)
       ((DefaultTreeModel) model).setAsksAllowsChildren(true);
-    ((JTree) component).setSelectionModel(new BTreeSelectionModel());
+    getComponent().setSelectionModel(new BTreeSelectionModel());
     selectionEnabled = true;
-    ((JTree) component).setShowsRootHandles(true);
+    getComponent().setShowsRootHandles(true);
   }
   
   /**
@@ -158,14 +158,19 @@ public class BTree extends Widget
   {
     return new JTree(model);
   }
-  
+
+  public JTree getComponent()
+  {
+    return (JTree) component;
+  }
+
   /**
    * Get the TreeModel which controls the contents of this BTree.
    */
   
   public TreeModel getModel()
   {
-    return ((JTree) component).getModel();
+    return getComponent().getModel();
   }
   
   /**
@@ -174,8 +179,8 @@ public class BTree extends Widget
   
   public void setModel(TreeModel model)
   {
-    ((JTree) component).getModel().removeTreeModelListener(modelListener);
-    ((JTree) component).setModel(model);
+    getComponent().getModel().removeTreeModelListener(modelListener);
+    getComponent().setModel(model);
     model.addTreeModelListener(modelListener);
     invalidateSize();
   }
@@ -340,7 +345,7 @@ public class BTree extends Widget
   
   public boolean isMultipleSelectionEnabled()
   {
-    return (((JTree) component).getSelectionModel().getSelectionMode() != TreeSelectionModel.SINGLE_TREE_SELECTION);
+    return (getComponent().getSelectionModel().getSelectionMode() != TreeSelectionModel.SINGLE_TREE_SELECTION);
   }
   
   /**
@@ -349,7 +354,7 @@ public class BTree extends Widget
   
   public void setMultipleSelectionEnabled(boolean multiple)
   {
-    ((JTree) component).getSelectionModel().setSelectionMode(multiple ? TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION : TreeSelectionModel.SINGLE_TREE_SELECTION);
+    getComponent().getSelectionModel().setSelectionMode(multiple ? TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION : TreeSelectionModel.SINGLE_TREE_SELECTION);
   }
   
   /**
@@ -358,7 +363,7 @@ public class BTree extends Widget
   
   public int getSelectionCount()
   {
-    return ((JTree) component).getSelectionCount();
+    return getComponent().getSelectionCount();
   }
   
   /**
@@ -367,7 +372,7 @@ public class BTree extends Widget
   
   public TreePath getSelectedNode()
   {
-    return ((JTree) component).getSelectionPath();
+    return getComponent().getSelectionPath();
   }
 
   /**
@@ -376,7 +381,7 @@ public class BTree extends Widget
   
   public TreePath [] getSelectedNodes()
   {
-    return ((JTree) component).getSelectionPaths();
+    return getComponent().getSelectionPaths();
   }
   
   /**
@@ -387,7 +392,7 @@ public class BTree extends Widget
   
   public boolean isNodeSelected(TreePath path)
   {
-    return ((JTree) component).isPathSelected(path);
+    return getComponent().isPathSelected(path);
   }
   
   /**
@@ -403,9 +408,9 @@ public class BTree extends Widget
     {
       suppressEvents++;
       if (selected)
-        ((JTree) component).addSelectionPath(path);
+        getComponent().addSelectionPath(path);
       else
-        ((JTree) component).removeSelectionPath(path);
+        getComponent().removeSelectionPath(path);
     }
     finally
     {
@@ -422,7 +427,7 @@ public class BTree extends Widget
     try
     {
       suppressEvents++;
-      ((JTree) component).clearSelection();
+      getComponent().clearSelection();
     }
     finally
     {
@@ -436,7 +441,7 @@ public class BTree extends Widget
   
   public boolean isEditable()
   {
-    return ((JTree) component).isEditable();
+    return getComponent().isEditable();
   }
   
   /**
@@ -445,7 +450,7 @@ public class BTree extends Widget
   
   public void setEditable(boolean editable)
   {
-    ((JTree) component).setEditable(editable);
+    getComponent().setEditable(editable);
   }
     
   /**
@@ -456,7 +461,7 @@ public class BTree extends Widget
   
   public void editNode(TreePath path)
   {
-    ((JTree) component).startEditingAtPath(path);
+    getComponent().startEditingAtPath(path);
   }
   
   /**
@@ -468,7 +473,7 @@ public class BTree extends Widget
   
   public TreePath findNode(Point pos)
   {
-    return ((JTree) component).getPathForLocation(pos.x, pos.y);
+    return getComponent().getPathForLocation(pos.x, pos.y);
   }
   
   /**
@@ -479,7 +484,7 @@ public class BTree extends Widget
   
   public boolean isNodeExpanded(TreePath path)
   {
-    return ((JTree) component).isExpanded(path);
+    return getComponent().isExpanded(path);
   }
 
   /**
@@ -492,9 +497,9 @@ public class BTree extends Widget
   public void setNodeExpanded(TreePath path, boolean expanded)
   {
     if (expanded)
-      ((JTree) component).expandPath(path);
+      getComponent().expandPath(path);
     else
-      ((JTree) component).collapsePath(path);
+      getComponent().collapsePath(path);
     updateScrollPane();
   }
   
@@ -507,7 +512,7 @@ public class BTree extends Widget
   
   public boolean isNodeVisible(TreePath path)
   {
-    return ((JTree) component).isVisible(path);
+    return getComponent().isVisible(path);
   }
   
   /**
@@ -518,7 +523,7 @@ public class BTree extends Widget
   
   public void makeNodeVisible(TreePath path)
   {
-    ((JTree) component).makeVisible(path);
+    getComponent().makeVisible(path);
   }
 
   /**
@@ -535,9 +540,9 @@ public class BTree extends Widget
   
   public void scrollToNode(TreePath path)
   {
-    Rectangle bounds = ((JTree) component).getPathBounds(path);
+    Rectangle bounds = getComponent().getPathBounds(path);
     if (bounds != null)
-      ((JTree) component).scrollRectToVisible(bounds);
+      getComponent().scrollRectToVisible(bounds);
   }
   
   /**
@@ -548,7 +553,7 @@ public class BTree extends Widget
   
   public boolean isRootNodeShown()
   {
-    return ((JTree) component).isRootVisible();
+    return getComponent().isRootVisible();
   }
   
   /**
@@ -559,7 +564,7 @@ public class BTree extends Widget
   
   public void setRootNodeShown(boolean shown)
   {
-    ((JTree) component).setRootVisible(shown);
+    getComponent().setRootVisible(shown);
   }
   
   /**
@@ -568,7 +573,7 @@ public class BTree extends Widget
   
   public int getPreferredVisibleRows()
   {
-    return ((JTree) component).getVisibleRowCount();
+    return getComponent().getVisibleRowCount();
   }
   
   /**
@@ -577,7 +582,7 @@ public class BTree extends Widget
   
   public void setPreferredVisibleRows(int rows)
   {
-    ((JTree) component).setVisibleRowCount(rows);
+    getComponent().setVisibleRowCount(rows);
     invalidateSize();
   }
   
@@ -587,7 +592,7 @@ public class BTree extends Widget
   
   public TreeCellRenderer getCellRenderer()
   {
-    return ((JTree) component).getCellRenderer();
+    return getComponent().getCellRenderer();
   }
   
   /**
@@ -596,7 +601,7 @@ public class BTree extends Widget
   
   public void setCellRenderer(TreeCellRenderer renderer)
   {
-    ((JTree) component).setCellRenderer(renderer);
+    getComponent().setCellRenderer(renderer);
   }
 
   /**

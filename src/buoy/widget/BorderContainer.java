@@ -51,7 +51,12 @@ public class BorderContainer extends WidgetContainer
     childLayout = new LayoutInfo [5];
     defaultLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null);
   }
-  
+
+  public JPanel getComponent()
+  {
+    return (JPanel) component;
+  }
+
   /**
    * Get the number of children in this container.
    */
@@ -69,9 +74,9 @@ public class BorderContainer extends WidgetContainer
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList ls = new ArrayList(5);
+    ArrayList<Widget> ls = new ArrayList<Widget>(5);
     for (int i = 0; i < child.length; i++)
       if (child[i] != null)
         ls.add(child[i]);
@@ -114,7 +119,7 @@ public class BorderContainer extends WidgetContainer
   
   public void layoutChildren()
   {
-    Dimension size = component.getSize();
+    Dimension size = getComponent().getSize();
     Rectangle bounds[] = new Rectangle [5];
     Dimension prefSize[] = new Dimension [5];
     for (int i = 0; i < child.length; i++)
@@ -186,7 +191,7 @@ public class BorderContainer extends WidgetContainer
       widget.getParent().remove(widget);
     child[where.value] = widget;
     childLayout[where.value] = layout;
-    ((JPanel) component).add(widget.component);
+    getComponent().add(widget.getComponent());
     setAsParent(widget);
     invalidateSize();
   }
@@ -308,7 +313,7 @@ public class BorderContainer extends WidgetContainer
   {
     if (child[where] == null)
       return;
-    ((JPanel) component).remove(child[where].component);
+    getComponent().remove(child[where].getComponent());
     removeAsParent(child[where]);
     child[where] = null;
     childLayout[where] = null;

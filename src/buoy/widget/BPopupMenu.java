@@ -4,6 +4,7 @@ import buoy.event.*;
 import buoy.xml.*;
 import buoy.xml.delegate.*;
 import java.util.*;
+import java.awt.*;
 import javax.swing.*;
 
 /**
@@ -25,7 +26,7 @@ import javax.swing.*;
 
 public class BPopupMenu extends WidgetContainer implements MenuWidget
 {
-  private ArrayList elements;
+  private ArrayList<MenuWidget> elements;
   
   static
   {
@@ -39,7 +40,7 @@ public class BPopupMenu extends WidgetContainer implements MenuWidget
   public BPopupMenu()
   {
     component = createComponent();
-    elements = new ArrayList();
+    elements = new ArrayList<MenuWidget>();
   }
   
   /**
@@ -51,7 +52,12 @@ public class BPopupMenu extends WidgetContainer implements MenuWidget
   {
     return new JPopupMenu();
   }
-  
+
+  public JPopupMenu getComponent()
+  {
+    return (JPopupMenu) component;
+  }
+
   /**
    * Display the popup menu over another Widget.
    *
@@ -62,7 +68,7 @@ public class BPopupMenu extends WidgetContainer implements MenuWidget
   
   public void show(Widget widget, int x, int y)
   {
-    ((JPopupMenu) component).show(widget.component, x, y);
+    getComponent().show(widget.getComponent(), x, y);
   }
   
   /**
@@ -107,7 +113,7 @@ public class BPopupMenu extends WidgetContainer implements MenuWidget
     if (parent != null)
       parent.remove((Widget) widget);
     elements.add(index, widget);
-    ((JPopupMenu) component).add(((Widget) widget).component, index);
+    getComponent().add(((Widget) widget).getComponent(), index);
     setAsParent((Widget) widget);
   }
 
@@ -135,16 +141,19 @@ public class BPopupMenu extends WidgetContainer implements MenuWidget
   
   public MenuWidget getChild(int i)
   {
-    return (MenuWidget) elements.get(i);
+    return elements.get(i);
   }
   
   /**
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    return new ArrayList(elements);
+    ArrayList<Widget> children = new ArrayList<Widget>(elements.size());
+    for (MenuWidget widget : elements)
+      children.add((Widget) widget);
+    return children;
   }
   
   /**
@@ -154,7 +163,7 @@ public class BPopupMenu extends WidgetContainer implements MenuWidget
   public void remove(Widget widget)
   {
     elements.remove(widget);
-    ((JPopupMenu) component).remove(widget.component);
+    getComponent().remove(widget.getComponent());
     removeAsParent(widget);
   }
   
@@ -166,7 +175,7 @@ public class BPopupMenu extends WidgetContainer implements MenuWidget
   {
     for (int i = 0; i < elements.size(); i++)
       removeAsParent((Widget) elements.get(i));
-    ((JPopupMenu) component).removeAll();
+    getComponent().removeAll();
     elements.clear();
   }
   

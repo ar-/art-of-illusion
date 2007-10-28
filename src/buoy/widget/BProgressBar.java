@@ -79,14 +79,19 @@ public class BProgressBar extends Widget
   {
     return new JProgressBar();
   }
-  
+
+  public JProgressBar getComponent()
+  {
+    return (JProgressBar) component;
+  }
+
   /**
    * Get the progress bar's current progress value.
    */
   
   public int getValue()
   {
-    return ((JProgressBar) component).getValue();
+    return getComponent().getValue();
   }
   
   /**
@@ -95,7 +100,7 @@ public class BProgressBar extends Widget
   
   public void setValue(int value)
   {
-    ((JProgressBar) component).setValue(value);
+    getComponent().setValue(value);
   }
   
   /**
@@ -104,7 +109,7 @@ public class BProgressBar extends Widget
   
   public int getMinimum()
   {
-    return ((JProgressBar) component).getMinimum();
+    return getComponent().getMinimum();
   }
   
   /**
@@ -113,7 +118,7 @@ public class BProgressBar extends Widget
   
   public void setMinimum(int min)
   {
-    ((JProgressBar) component).setMinimum(min);
+    getComponent().setMinimum(min);
   }
   
   /**
@@ -122,7 +127,7 @@ public class BProgressBar extends Widget
   
   public int getMaximum()
   {
-    return ((JProgressBar) component).getMaximum();
+    return getComponent().getMaximum();
   }
   
   /**
@@ -131,7 +136,7 @@ public class BProgressBar extends Widget
   
   public void setMaximum(int max)
   {
-    ((JProgressBar) component).setMaximum(max);
+    getComponent().setMaximum(max);
   }
   
   /**
@@ -140,7 +145,7 @@ public class BProgressBar extends Widget
   
   public Orientation getOrientation()
   {
-    return (((JProgressBar) component).getOrientation() == JProgressBar.HORIZONTAL ? HORIZONTAL : VERTICAL);
+    return (getComponent().getOrientation() == JProgressBar.HORIZONTAL ? HORIZONTAL : VERTICAL);
   }
   
   /**
@@ -149,7 +154,7 @@ public class BProgressBar extends Widget
   
   public void setOrientation(Orientation orient)
   {
-    ((JProgressBar) component).setOrientation(orient.value);
+    getComponent().setOrientation(orient.value);
   }
   
   /**
@@ -160,7 +165,7 @@ public class BProgressBar extends Widget
   
   public boolean isIndeterminate()
   {
-    return ((JProgressBar) component).isIndeterminate();
+    return getComponent().isIndeterminate();
   }
   
   /**
@@ -171,7 +176,7 @@ public class BProgressBar extends Widget
   
   public void setIndeterminate(boolean indeterminate)
   {
-    ((JProgressBar) component).setIndeterminate(indeterminate);
+    getComponent().setIndeterminate(indeterminate);
   }
   
   /**
@@ -181,7 +186,7 @@ public class BProgressBar extends Widget
   
   public boolean getShowProgressText()
   {
-    return ((JProgressBar) component).isStringPainted();
+    return getComponent().isStringPainted();
   }
   
   /**
@@ -191,7 +196,7 @@ public class BProgressBar extends Widget
   
   public void setShowProgressText(boolean show)
   {
-    ((JProgressBar) component).setStringPainted(show);
+    getComponent().setStringPainted(show);
   }
   
   /**
@@ -201,7 +206,7 @@ public class BProgressBar extends Widget
   
   public String getProgressText()
   {
-    return ((JProgressBar) component).getString();
+    return getComponent().getString();
   }
   
   /**
@@ -211,7 +216,7 @@ public class BProgressBar extends Widget
   
   public void setProgressText(String text)
   {
-    ((JProgressBar) component).setString(text);
+    getComponent().setString(text);
   }
   
   /**

@@ -20,7 +20,8 @@ import javax.swing.JPanel;
 
 public class ColumnContainer extends WidgetContainer
 {
-  private ArrayList child, childLayout;
+  private ArrayList<Widget> child;
+  private ArrayList<LayoutInfo> childLayout;
   private LayoutInfo defaultLayout;
   
   static
@@ -35,11 +36,16 @@ public class ColumnContainer extends WidgetContainer
   public ColumnContainer()
   {
     component = new WidgetContainerPanel(this);
-    child = new ArrayList();
-    childLayout = new ArrayList();
+    child = new ArrayList<Widget>();
+    childLayout = new ArrayList<LayoutInfo>();
     defaultLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 2, 2, 2), null);
   }
-  
+
+  public JPanel getComponent()
+  {
+    return (JPanel) component;
+  }
+
   /**
    * Get the number of children in this container.
    */
@@ -55,16 +61,16 @@ public class ColumnContainer extends WidgetContainer
   
   public Widget getChild(int i)
   {
-    return (Widget) child.get(i);
+    return child.get(i);
   }
 
   /**
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    return new ArrayList(child);
+    return new ArrayList<Widget>(child);
   }
   
   /**
@@ -76,12 +82,12 @@ public class ColumnContainer extends WidgetContainer
   
   public void layoutChildren()
   {
-    Dimension size = component.getSize();
+    Dimension size = getComponent().getSize();
     Rectangle cell = new Rectangle(0, 0, size.width, 0);
     for (int i = 0; i < child.size(); i++)
       {
-        Widget w = (Widget) child.get(i);
-        LayoutInfo layout = (LayoutInfo) childLayout.get(i);
+        Widget w = child.get(i);
+        LayoutInfo layout = childLayout.get(i);
         if (layout == null)
           layout = defaultLayout;
         Dimension prefSize = layout.getPreferredSize(w);
@@ -130,7 +136,7 @@ public class ColumnContainer extends WidgetContainer
       widget.getParent().remove(widget);
     child.add(index, widget);
     childLayout.add(index, layout);
-    ((JPanel) component).add(widget.component, index);
+    getComponent().add(widget.getComponent(), index);
     setAsParent(widget);
     invalidateSize();
   }
@@ -145,7 +151,7 @@ public class ColumnContainer extends WidgetContainer
   
   public LayoutInfo getChildLayout(int index)
   {
-    return (LayoutInfo) childLayout.get(index);
+    return childLayout.get(index);
   }
 
   /**
@@ -175,7 +181,7 @@ public class ColumnContainer extends WidgetContainer
     int index = child.indexOf(widget);
     if (index == -1)
       return null;
-    return (LayoutInfo) childLayout.get(index);
+    return childLayout.get(index);
   }
   
   /**
@@ -234,8 +240,8 @@ public class ColumnContainer extends WidgetContainer
   
   public void remove(int index)
   {
-    Widget w = (Widget) child.get(index);
-    ((JPanel) component).remove(w.component);
+    Widget w = child.get(index);
+    getComponent().remove(w.getComponent());
     child.remove(index);
     childLayout.remove(index);
     removeAsParent(w);
@@ -248,9 +254,9 @@ public class ColumnContainer extends WidgetContainer
   
   public void removeAll()
   {
-    ((JPanel) component).removeAll();
+    getComponent().removeAll();
     for (int i = 0; i < child.size(); i++)
-      removeAsParent((Widget) child.get(i));
+      removeAsParent(child.get(i));
     child.clear();
     childLayout.clear();
     invalidateSize();
@@ -279,7 +285,7 @@ public class ColumnContainer extends WidgetContainer
     Dimension minSize = new Dimension(0, 0);
     for (int i = 0; i < child.size(); i++)
     {
-      Dimension dim = ((Widget) child.get(i)).getMinimumSize();
+      Dimension dim = child.get(i).getMinimumSize();
       minSize.height += dim.height;
       if (minSize.width < dim.width)
         minSize.width = dim.width;
@@ -297,8 +303,8 @@ public class ColumnContainer extends WidgetContainer
     Dimension prefSize = new Dimension(0, 0);
     for (int i = 0; i < child.size(); i++)
     {
-      Widget w = (Widget) child.get(i);
-      LayoutInfo layout = (LayoutInfo) childLayout.get(i);
+      Widget w = child.get(i);
+      LayoutInfo layout = childLayout.get(i);
       if (layout == null)
         layout = defaultLayout;
       Dimension dim = layout.getPreferredSize(w);

@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
 import java.awt.dnd.*;
-import java.util.*;
 
 /**
  * This is a non-public class which is used internally by the docking framework.  It coordinates the
@@ -237,10 +236,8 @@ class DragManager
     do
     {
       found = false;
-      Iterator children = container.getChildren().iterator();
-      while (children.hasNext())
+      for (Widget w : container.getChildren())
       {
-        Widget w = (Widget) children.next();
         if (!w.getComponent().isShowing())
           continue;
         Rectangle bounds = w.getComponent().getBounds();

@@ -38,7 +38,7 @@ public class BCheckBox extends Widget
   public BCheckBox(String text, boolean state)
   {
     component = createComponent(text, state);
-    ((JCheckBox) component).addActionListener(new ActionListener() {
+    getComponent().addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ev)
       {
         dispatchEvent(new ValueChangedEvent(BCheckBox.this));
@@ -58,14 +58,19 @@ public class BCheckBox extends Widget
   {
     return new JCheckBox(text, state);
   }
-  
+
+  public JCheckBox getComponent()
+  {
+    return (JCheckBox) component;
+  }
+
   /**
    * Get the selection state of this check box.
    */
   
   public boolean getState()
   {
-    return ((JCheckBox) component).isSelected();
+    return getComponent().isSelected();
   }
   
   /**
@@ -74,7 +79,7 @@ public class BCheckBox extends Widget
   
   public void setState(boolean selected)
   {
-    ((JCheckBox) component).setSelected(selected);
+    getComponent().setSelected(selected);
   }
   
   /**
@@ -83,7 +88,7 @@ public class BCheckBox extends Widget
   
   public String getText()
   {
-    return ((JCheckBox) component).getText();
+    return getComponent().getText();
   }
   
   /**
@@ -92,7 +97,7 @@ public class BCheckBox extends Widget
   
   public void setText(String text)
   {
-    ((JCheckBox) component).setText(text);
+    getComponent().setText(text);
     invalidateSize();
   }
   

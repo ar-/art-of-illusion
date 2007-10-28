@@ -114,14 +114,19 @@ public class BLabel extends Widget
   {
     return new JLabel(text, image, SwingConstants.RIGHT);
   }
-  
+
+  public JLabel getComponent()
+  {
+    return (JLabel) component;
+  }
+
   /**
    * Get the text which appears on this label.
    */
   
   public String getText()
   {
-    return ((JLabel) component).getText();
+    return getComponent().getText();
   }
   
   /**
@@ -130,7 +135,7 @@ public class BLabel extends Widget
   
   public void setText(String text)
   {
-    ((JLabel) component).setText(text);
+    getComponent().setText(text);
     invalidateSize();
   }
   
@@ -140,7 +145,7 @@ public class BLabel extends Widget
   
   public Icon getIcon()
   {
-    return ((JLabel) component).getIcon();
+    return getComponent().getIcon();
   }
   
   /**
@@ -149,7 +154,7 @@ public class BLabel extends Widget
   
   public void setIcon(Icon image)
   {
-    ((JLabel) component).setIcon(image);
+    getComponent().setIcon(image);
     invalidateSize();
   }
 
@@ -170,8 +175,8 @@ public class BLabel extends Widget
 
   public Position getAlignment()
   {
-    int halign = ((JLabel) component).getHorizontalAlignment();
-    int valign = ((JLabel) component).getVerticalAlignment();
+    int halign = getComponent().getHorizontalAlignment();
+    int valign = getComponent().getVerticalAlignment();
     return Position.get(halign, valign);
   }
 
@@ -183,7 +188,7 @@ public class BLabel extends Widget
   public void setAlignment(Position alignment)
   {
     int align = alignment.value;
-    JLabel jl = (JLabel) component;
+    JLabel jl = getComponent();
     if ((align&NORTH.value) != 0)
       jl.setVerticalAlignment(SwingConstants.TOP);
     else if ((align&SOUTH.value) != 0)
@@ -206,8 +211,8 @@ public class BLabel extends Widget
 
   public Position getTextPosition()
   {
-    int hpos = ((JLabel) component).getHorizontalTextPosition();
-    int vpos = ((JLabel) component).getVerticalTextPosition();
+    int hpos = getComponent().getHorizontalTextPosition();
+    int vpos = getComponent().getVerticalTextPosition();
     return Position.get(hpos, vpos);
   }
   
@@ -220,7 +225,7 @@ public class BLabel extends Widget
   public void setTextPosition(Position position)
   {
     int pos = position.value;
-    JLabel jl = (JLabel) component;
+    JLabel jl = getComponent();
     if ((pos&NORTH.value) != 0)
       jl.setVerticalTextPosition(SwingConstants.TOP);
     else if ((pos&SOUTH.value) != 0)

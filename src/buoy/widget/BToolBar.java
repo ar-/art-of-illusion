@@ -18,7 +18,7 @@ import java.util.*;
 
 public class BToolBar extends WidgetContainer
 {
-  private ArrayList child;
+  private ArrayList<Widget> child;
 
   public static final Orientation HORIZONTAL = new Orientation(SwingConstants.HORIZONTAL);
   public static final Orientation VERTICAL = new Orientation(SwingConstants.VERTICAL);
@@ -47,7 +47,7 @@ public class BToolBar extends WidgetContainer
   public BToolBar(Orientation orientation)
   {
     component = createComponent();
-    child = new ArrayList();
+    child = new ArrayList<Widget>();
     setOrientation(orientation);
   }
 
@@ -61,6 +61,11 @@ public class BToolBar extends WidgetContainer
     JToolBar toolbar = new JToolBar();
     toolbar.setFloatable(false);
     return toolbar;
+  }
+
+  public JToolBar getComponent()
+  {
+    return (JToolBar) component;
   }
 
   /**
@@ -105,7 +110,7 @@ public class BToolBar extends WidgetContainer
     if (widget.getParent() != null)
       widget.getParent().remove(widget);
     child.add(index, widget);
-    ((JToolBar) component).add(new SingleWidgetPanel((Widget) widget), index);
+    getComponent().add(new SingleWidgetPanel((Widget) widget), index);
     setAsParent((Widget) widget);
   }
 
@@ -133,16 +138,16 @@ public class BToolBar extends WidgetContainer
 
   public Widget getChild(int i)
   {
-    return (Widget) child.get(i);
+    return child.get(i);
   }
 
   /**
    * Get a Collection containing all child Widgets of this container.
    */
 
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    return new ArrayList(child);
+    return new ArrayList<Widget>(child);
   }
 
   /**
@@ -152,7 +157,7 @@ public class BToolBar extends WidgetContainer
   public void remove(Widget widget)
   {
     child.remove(widget);
-    ((JToolBar) component).remove(widget.component.getParent());
+    getComponent().remove(widget.getComponent().getParent());
     removeAsParent(widget);
   }
 
@@ -164,7 +169,7 @@ public class BToolBar extends WidgetContainer
   {
     for (int i = 0; i < child.size(); i++)
       removeAsParent((Widget) child.get(i));
-    ((JToolBar) component).removeAll();
+    getComponent().removeAll();
     child.clear();
   }
 
@@ -193,7 +198,7 @@ public class BToolBar extends WidgetContainer
     getComponent().validate();
     for (int i = 0; i < child.size(); i++)
     {
-      Widget w = (Widget) child.get(i);
+      Widget w = child.get(i);
       if (w instanceof WidgetContainer)
         ((WidgetContainer) w).layoutChildren();
     }

@@ -13,7 +13,7 @@ import javax.swing.*;
 
 public class BMenuBar extends WidgetContainer
 {
-  private ArrayList menus;
+  private ArrayList<BMenu> menus;
   
   static
   {
@@ -27,7 +27,7 @@ public class BMenuBar extends WidgetContainer
   public BMenuBar()
   {
     component = createComponent();
-    menus = new ArrayList();
+    menus = new ArrayList<BMenu>();
   }
   
   /**
@@ -39,7 +39,12 @@ public class BMenuBar extends WidgetContainer
   {
     return new JMenuBar();
   }
-  
+
+  public JMenuBar getComponent()
+  {
+    return (JMenuBar) component;
+  }
+
   /**
    * Add a BMenu to the end of the menu bar.
    *
@@ -63,7 +68,7 @@ public class BMenuBar extends WidgetContainer
     if (menu.getParent() != null)
       menu.getParent().remove(menu);
     menus.add(index, menu);
-    ((JMenuBar) component).add((JMenu) menu.getComponent(), index);
+    getComponent().add((JMenu) menu.getComponent(), index);
     setAsParent(menu);
     invalidateSize();
   }
@@ -83,16 +88,16 @@ public class BMenuBar extends WidgetContainer
   
   public BMenu getChild(int i)
   {
-    return (BMenu) menus.get(i);
+    return menus.get(i);
   }
   
   /**
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    return new ArrayList(menus);
+    return new ArrayList<Widget>(menus);
   }
   
   /**
@@ -102,7 +107,7 @@ public class BMenuBar extends WidgetContainer
   public void remove(Widget widget)
   {
     menus.remove(widget);
-    ((JMenuBar) component).remove(widget.component);
+    getComponent().remove(widget.getComponent());
     removeAsParent(widget);
     invalidateSize();
   }
@@ -115,7 +120,7 @@ public class BMenuBar extends WidgetContainer
   {
     for (int i = 0; i < menus.size(); i++)
       removeAsParent((Widget) menus.get(i));
-    ((JMenuBar) component).removeAll();
+    getComponent().removeAll();
     menus.clear();
     invalidateSize();
   }

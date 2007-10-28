@@ -1,7 +1,6 @@
 package buoy.widget;
 
 import buoy.event.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
@@ -55,12 +54,12 @@ public class BDocumentViewer extends Widget
   public BDocumentViewer()
   {
     component = createComponent();
-    JEditorPane ep = (JEditorPane) component;
+    JEditorPane ep = getComponent();
     ep.setEditable(false);
     ep.addPropertyChangeListener("page", new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent ev)
       {
-        if (component.isDisplayable())
+        if (getComponent().isDisplayable())
           updateScrollPane();
         dispatchEvent(new ValueChangedEvent(BDocumentViewer.this));
       }
@@ -68,7 +67,7 @@ public class BDocumentViewer extends Widget
     ep.addComponentListener(new ComponentAdapter() {
       public void componentResized(ComponentEvent ev)
       {
-        if (component.isDisplayable())
+        if (getComponent().isDisplayable())
           updateScrollPane();
       }
     });
@@ -107,7 +106,12 @@ public class BDocumentViewer extends Widget
   {
     return new JEditorPane();
   }
-  
+
+  public JEditorPane getComponent()
+  {
+    return (JEditorPane) component;
+  }
+
   /**
    * Get the URL for the document currently being displayed.  If the document was not specified
    * by a URL, this returns null.
@@ -115,7 +119,7 @@ public class BDocumentViewer extends Widget
   
   public URL getDocument()
   {
-    return ((JEditorPane) component).getPage();
+    return getComponent().getPage();
   }
   
   /**
@@ -131,7 +135,7 @@ public class BDocumentViewer extends Widget
   
   public void setDocument(URL document) throws IOException
   {
-    ((JEditorPane) component).setPage(document);
+    getComponent().setPage(document);
   }
   
   /**
@@ -145,9 +149,8 @@ public class BDocumentViewer extends Widget
   
   public void setDocument(String text, String type)
   {
-    JEditorPane ep = (JEditorPane) component;
-    ep.setContentType(type);
-    ep.setText(text);
+    getComponent().setContentType(type);
+    getComponent().setText(text);
   }
   
   /**
@@ -156,7 +159,7 @@ public class BDocumentViewer extends Widget
   
   public String getContentType()
   {
-    return ((JEditorPane) component).getContentType();
+    return getComponent().getContentType();
   }
   
   /**
@@ -170,7 +173,7 @@ public class BDocumentViewer extends Widget
     if (event.getEvent() instanceof HTMLFrameHyperlinkEvent)
     {
       HTMLFrameHyperlinkEvent ev = (HTMLFrameHyperlinkEvent) event.getEvent();
-      ((HTMLDocument) ((JEditorPane) component).getDocument()).processHTMLFrameHyperlinkEvent(ev);
+      ((HTMLDocument) getComponent().getDocument()).processHTMLFrameHyperlinkEvent(ev);
     }
     else
       setDocument(event.getURL());

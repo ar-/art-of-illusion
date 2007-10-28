@@ -4,6 +4,7 @@ import buoy.xml.*;
 import buoy.xml.delegate.*;
 
 import java.awt.event.*;
+import java.awt.*;
 import javax.swing.*;
 
 /**
@@ -68,7 +69,7 @@ public class BTextField extends TextWidget
   public BTextField(String text, int columns)
   {
     component = createComponent();
-    JTextField tf = (JTextField) component;
+    JTextField tf = getComponent();
     tf.setText(text);
     tf.setColumns(columns);
     tf.addCaretListener(caretListener);
@@ -116,13 +117,18 @@ public class BTextField extends TextWidget
     return new JTextField();
   }
 
+  public JTextField getComponent()
+  {
+    return (JTextField) component;
+  }
+
   /**
    * Get the number of columns this text field should be wide enough to display.
    */
   
   public int getColumns()
   {
-    return ((JTextField) component).getColumns();
+    return getComponent().getColumns();
   }
   
   /**
@@ -131,7 +137,7 @@ public class BTextField extends TextWidget
   
   public void setColumns(int columns)
   {
-    ((JTextField) component).setColumns(columns);
+    getComponent().setColumns(columns);
     invalidateSize();
   }
 }

@@ -22,8 +22,8 @@ import javax.swing.JPanel;
 
 public class ExplicitContainer extends WidgetContainer
 {
-  private ArrayList children;
-  private ArrayList childBounds;
+  private ArrayList<Widget> children;
+  private ArrayList<Rectangle> childBounds;
   private Dimension requiredSize;
   
   static
@@ -38,11 +38,16 @@ public class ExplicitContainer extends WidgetContainer
   public ExplicitContainer()
   {
     component = new WidgetContainerPanel(this);
-    children = new ArrayList();
-    childBounds = new ArrayList();
+    children = new ArrayList<Widget>();
+    childBounds = new ArrayList<Rectangle>();
     requiredSize = new Dimension(0, 0);
   }
-  
+
+  public JPanel getComponent()
+  {
+    return (JPanel) component;
+  }
+
   /**
    * Get the number of children in this container.
    */
@@ -58,16 +63,16 @@ public class ExplicitContainer extends WidgetContainer
   
   public Widget getChild(int i)
   {
-    return (Widget) children.get(i);
+    return children.get(i);
   }
   
   /**
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    return new ArrayList(children);
+    return new ArrayList<Widget>(children);
   }
   
   /**
@@ -81,8 +86,8 @@ public class ExplicitContainer extends WidgetContainer
   {
     for (int i = 0; i < children.size(); i++)
     {
-      Widget child = (Widget) children.get(i);
-      Rectangle bounds = (Rectangle) childBounds.get(i);
+      Widget child = children.get(i);
+      Rectangle bounds = childBounds.get(i);
       child.getComponent().setBounds(bounds);
       if (child instanceof WidgetContainer)
         ((WidgetContainer) child).layoutChildren();
@@ -101,9 +106,9 @@ public class ExplicitContainer extends WidgetContainer
     if (widget.getParent() != null)
       widget.getParent().remove(widget);
     children.add(widget);
-    childBounds.add(bounds.clone());
-    ((JPanel) component).add(widget.component);
-    widget.component.setBounds(bounds);
+    childBounds.add(new Rectangle(bounds));
+    getComponent().add(widget.getComponent());
+    widget.getComponent().setBounds(bounds);
     setAsParent(widget);
     requiredSize.width = Math.max(requiredSize.width, bounds.x+bounds.width);
     requiredSize.height = Math.max(requiredSize.height, bounds.y+bounds.height);
@@ -131,7 +136,7 @@ public class ExplicitContainer extends WidgetContainer
   
   public Rectangle getChildBounds(int index)
   {
-    return (Rectangle) ((Rectangle) childBounds.get(index)).clone();
+    return new Rectangle(childBounds.get(index));
   }
   
   /**
@@ -143,7 +148,7 @@ public class ExplicitContainer extends WidgetContainer
   
   public void setChildBounds(int index, Rectangle bounds)
   {
-    childBounds.set(index, bounds.clone());
+    childBounds.set(index, new Rectangle(bounds));
     findRequiredSize();
   }
   
@@ -159,7 +164,7 @@ public class ExplicitContainer extends WidgetContainer
   {
     int index = children.indexOf(widget);
     if (index > -1)
-      return (Rectangle) ((Rectangle) childBounds.get(index)).clone();
+      return new Rectangle(childBounds.get(index));
     return null;
   }
   
@@ -175,7 +180,7 @@ public class ExplicitContainer extends WidgetContainer
     int index = children.indexOf(widget);
     if (index > -1)
     {
-      childBounds.set(index, bounds.clone());
+      childBounds.set(index, new Rectangle(bounds));
       findRequiredSize();
     }
   }
@@ -191,7 +196,7 @@ public class ExplicitContainer extends WidgetContainer
     int index = children.indexOf(widget);
     if (index > -1)
     {
-      ((JPanel) component).remove(widget.component);
+      getComponent().remove(widget.getComponent());
       children.remove(index);
       childBounds.remove(index);
       removeAsParent(widget);
@@ -205,7 +210,7 @@ public class ExplicitContainer extends WidgetContainer
   
   public void removeAll()
   {
-    ((JPanel) component).removeAll();
+    getComponent().removeAll();
     for (int i = 0; i < children.size(); i++)
       removeAsParent((Widget) children.get(i));
     children.clear();
@@ -223,7 +228,7 @@ public class ExplicitContainer extends WidgetContainer
     requiredSize.width = requiredSize.height = 0;
     for (int i = childBounds.size()-1; i >= 0; i--)
     {
-      Rectangle r = (Rectangle) childBounds.get(i);
+      Rectangle r = childBounds.get(i);
       requiredSize.width = Math.max(requiredSize.width, r.x+r.width);
       requiredSize.height = Math.max(requiredSize.height, r.y+r.height);
     }

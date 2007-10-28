@@ -54,7 +54,7 @@ import javax.swing.JPanel;
 
 public class OverlayContainer extends WidgetContainer
 {
-  private ArrayList children;
+  private ArrayList<Widget> children;
   private Dimension minSize, prefSize;
 
   static
@@ -69,9 +69,14 @@ public class OverlayContainer extends WidgetContainer
   public OverlayContainer()
   {
     component = new WidgetContainerPanel(this);
-    children = new ArrayList();
+    children = new ArrayList<Widget>();
   }
-  
+
+  public JPanel getComponent()
+  {
+    return (JPanel) component;
+  }
+
   /**
    * Get the number of children in this container.
    */
@@ -87,16 +92,16 @@ public class OverlayContainer extends WidgetContainer
   
   public Widget getChild(int i)
   {
-    return (Widget) children.get(i);
+    return children.get(i);
   }
   
   /**
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    return new ArrayList(children);
+    return new ArrayList<Widget>(children);
   }
 
   /**
@@ -123,7 +128,7 @@ public class OverlayContainer extends WidgetContainer
     Rectangle bounds = getBounds();
     for (int i = 0; i < children.size(); i++)
     {
-      Widget child = (Widget) children.get(i);
+      Widget child = children.get(i);
       Dimension max = child.getMaximumSize();
       child.getComponent().setBounds(new Rectangle(0, 0, Math.min(bounds.width, max.width), Math.min(bounds.height, max.height)));
       if (child instanceof WidgetContainer)
@@ -144,7 +149,7 @@ public class OverlayContainer extends WidgetContainer
     if (widget.getParent() != null)
       widget.getParent().remove(widget);
     children.add(index, widget);
-    ((JPanel) component).add(widget.component, index);
+    getComponent().add(widget.getComponent(), index);
     setAsParent(widget);
     invalidateSize();
   }
@@ -172,7 +177,7 @@ public class OverlayContainer extends WidgetContainer
     int index = children.indexOf(widget);
     if (index > -1)
     {
-      ((JPanel) component).remove(widget.component);
+      getComponent().remove(widget.getComponent());
       children.remove(index);
       removeAsParent(widget);
       invalidateSize();
@@ -185,9 +190,9 @@ public class OverlayContainer extends WidgetContainer
   
   public void removeAll()
   {
-    ((JPanel) component).removeAll();
-    for (int i = 0; i < children.size(); i++)
-      removeAsParent((Widget) children.get(i));
+    getComponent().removeAll();
+    for (Widget w : children)
+      removeAsParent(w);
     children.clear();
     invalidateSize();
   }
@@ -199,7 +204,7 @@ public class OverlayContainer extends WidgetContainer
   public void setVisibleChild(int i)
   {
     for (int j = 0; j < children.size(); j++)
-      ((Widget) children.get(j)).setVisible(i == j);
+      children.get(j).setVisible(i == j);
   }
   
   /**
@@ -208,11 +213,8 @@ public class OverlayContainer extends WidgetContainer
   
   public void setVisibleChild(Widget child)
   {
-    for (int j = 0; j < children.size(); j++)
-    {
-      Widget w = (Widget) children.get(j);
+    for (Widget w : children)
       w.setVisible(w == child);
-    }
   }
   
   /**
@@ -225,9 +227,9 @@ public class OverlayContainer extends WidgetContainer
     if (minSize == null)
     {
       minSize = new Dimension();
-      for (int i = 0; i < children.size(); i++)
+      for (Widget w : children)
       {
-        Dimension size = ((Widget) children.get(i)).getMinimumSize();
+        Dimension size = w.getMinimumSize();
         if (size.width > minSize.width)
           minSize.width = size.width;
         if (size.height > minSize.height)
@@ -247,9 +249,9 @@ public class OverlayContainer extends WidgetContainer
     if (prefSize == null)
     {
       prefSize = new Dimension();
-      for (int i = 0; i < children.size(); i++)
+      for (Widget w : children)
       {
-        Dimension size = ((Widget) children.get(i)).getPreferredSize();
+        Dimension size = w.getPreferredSize();
         if (size.width > prefSize.width)
           prefSize.width = size.width;
         if (size.height > prefSize.height)

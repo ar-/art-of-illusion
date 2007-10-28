@@ -1,9 +1,7 @@
 package buoy.widget;
 
-import buoy.event.*;
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * A BCheckBoxMenuItem is a menu item for making simple boolean selectons.  Selecting it toggles
@@ -90,14 +88,19 @@ public class BCheckBoxMenuItem extends BMenuItem
   {
     return new JCheckBoxMenuItem();
   }
-  
+
+  public JMenuItem getComponent()
+  {
+    return (JMenuItem) component;
+  }
+
   /**
    * Get the selection state of this menu item.
    */
   
   public boolean getState()
   {
-    return ((JCheckBoxMenuItem) component).isSelected();
+    return getComponent().isSelected();
   }
   
   /**
@@ -106,6 +109,6 @@ public class BCheckBoxMenuItem extends BMenuItem
   
   public void setState(boolean selected)
   {
-    ((JCheckBoxMenuItem) component).setSelected(selected);
+    getComponent().setSelected(selected);
   }
 }

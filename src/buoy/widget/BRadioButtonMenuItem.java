@@ -1,10 +1,7 @@
 package buoy.widget;
 
-import buoy.event.*;
 import buoy.xml.*;
 import buoy.xml.delegate.*;
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -104,18 +101,23 @@ public class BRadioButtonMenuItem extends BMenuItem
    * subclasses can override it.
    */
   
-  protected JMenuItem createComponent()
+  protected JRadioButtonMenuItem createComponent()
   {
     return new JRadioButtonMenuItem();
   }
-  
+
+  public JRadioButtonMenuItem getComponent()
+  {
+    return (JRadioButtonMenuItem) component;
+  }
+
   /**
    * Get the selection state of this menu item.
    */
   
   public boolean getState()
   {
-    return ((JRadioButtonMenuItem) component).isSelected();
+    return getComponent().isSelected();
   }
   
   /**
@@ -128,7 +130,7 @@ public class BRadioButtonMenuItem extends BMenuItem
     if (selected)
       group.setSelection(this);
     else
-      ((JRadioButtonMenuItem) component).setSelected(selected);
+      getComponent().setSelected(selected);
   }
   
   /**

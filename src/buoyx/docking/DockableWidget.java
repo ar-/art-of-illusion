@@ -166,9 +166,9 @@ public class DockableWidget extends WidgetContainer
     return (content == null ? 0 : 1);
   }
 
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList children = new ArrayList();
+    ArrayList<Widget> children = new ArrayList<Widget>();
     if (content != null)
       children.add(content);
     return children;
@@ -178,7 +178,7 @@ public class DockableWidget extends WidgetContainer
   {
     if (content == widget)
     {
-      ((JPanel) component).remove(widget.getComponent());
+      ((JPanel) getComponent()).remove(widget.getComponent());
       removeAsParent(widget);
       invalidateSize();
     }

@@ -76,7 +76,7 @@ public class BTextArea extends TextWidget
   public BTextArea(String text, int rows, int columns)
   {
     component = createComponent();
-    JTextArea ta = (JTextArea) component;
+    JTextArea ta = getComponent();
     ta.setText(text);
     ta.setRows(rows);
     ta.setColumns(columns);
@@ -94,13 +94,18 @@ public class BTextArea extends TextWidget
     return new JTextArea();
   }
 
+  public JTextArea getComponent()
+  {
+    return (JTextArea) component;
+  }
+
   /**
    * Get the number of rows this text area should be tall enough to display.
    */
   
   public int getRows()
   {
-    return ((JTextArea) component).getRows();
+    return getComponent().getRows();
   }
   
   /**
@@ -109,7 +114,7 @@ public class BTextArea extends TextWidget
   
   public void setRows(int rows)
   {
-    ((JTextArea) component).setRows(rows);
+    getComponent().setRows(rows);
     invalidateSize();
   }
 
@@ -119,7 +124,7 @@ public class BTextArea extends TextWidget
   
   public int getColumns()
   {
-    return ((JTextArea) component).getColumns();
+    return getComponent().getColumns();
   }
   
   /**
@@ -128,7 +133,7 @@ public class BTextArea extends TextWidget
   
   public void setColumns(int columns)
   {
-    ((JTextArea) component).setColumns(columns);
+    getComponent().setColumns(columns);
     invalidateSize();
   }
   
@@ -138,7 +143,7 @@ public class BTextArea extends TextWidget
   
   public int getLineCount()
   {
-    return ((JTextArea) component).getLineCount();
+    return getComponent().getLineCount();
   }
   
   /**
@@ -148,10 +153,9 @@ public class BTextArea extends TextWidget
   
   public WrapStyle getWrapStyle()
   {
-    JTextArea ta = (JTextArea) component;
-    if (!ta.getLineWrap())
+    if (!getComponent().getLineWrap())
       return WRAP_NONE;
-    if (ta.getWrapStyleWord())
+    if (getComponent().getWrapStyleWord())
       return WRAP_WORD;
     return WRAP_CHARACTER;
   }
@@ -163,7 +167,7 @@ public class BTextArea extends TextWidget
   
   public void setWrapStyle(WrapStyle style)
   {
-    JTextArea ta = (JTextArea) component;
+    JTextArea ta = getComponent();
     if (style == WRAP_NONE)
       ta.setLineWrap(false);
     else if (style == WRAP_CHARACTER)
@@ -185,7 +189,7 @@ public class BTextArea extends TextWidget
   
   public int getTabSize()
   {
-    return ((JTextArea) component).getTabSize();
+    return getComponent().getTabSize();
   }
 
   /**
@@ -194,7 +198,7 @@ public class BTextArea extends TextWidget
   
   public void setTabSize(int size)
   {
-    ((JTextArea) component).setTabSize(size);
+    getComponent().setTabSize(size);
   }
 
   /**
@@ -210,7 +214,7 @@ public class BTextArea extends TextWidget
     try
     {
       suppressEvents++;
-      ((JTextArea) component).append(text);
+      getComponent().append(text);
     }
     finally
     {
@@ -232,7 +236,7 @@ public class BTextArea extends TextWidget
     try
     {
       suppressEvents++;
-      ((JTextArea) component).insert(text, pos);
+      getComponent().insert(text, pos);
     }
     finally
     {
@@ -255,7 +259,7 @@ public class BTextArea extends TextWidget
     try
     {
       suppressEvents++;
-      ((JTextArea) component).replaceRange(text, start, end);
+      getComponent().replaceRange(text, start, end);
     }
     finally
     {

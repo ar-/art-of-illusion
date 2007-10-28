@@ -1,7 +1,6 @@
 package buoy.widget;
 
 import buoy.event.*;
-import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -48,13 +47,18 @@ public abstract class TextWidget extends Widget
     };
   }
 
+  public JTextComponent getComponent()
+  {
+    return (JTextComponent) component;
+  }
+
   /**
    * Get the text contained in the Widget.
    */
   
   public String getText()
   {
-    return ((JTextComponent) component).getText();
+    return getComponent().getText();
   }
 
   /**
@@ -68,7 +72,7 @@ public abstract class TextWidget extends Widget
     try
     {
       suppressEvents++;
-      ((JTextComponent) component).setText(text);
+      getComponent().setText(text);
     }
     finally
     {
@@ -82,7 +86,7 @@ public abstract class TextWidget extends Widget
   
   public int getLength()
   {
-    return ((JTextComponent) component).getDocument().getLength();
+    return getComponent().getDocument().getLength();
   }
   
   /**
@@ -91,7 +95,7 @@ public abstract class TextWidget extends Widget
   
   public int getCaretPosition()
   {
-    return ((JTextComponent) component).getCaretPosition();
+    return getComponent().getCaretPosition();
   }
   
   /**
@@ -103,7 +107,7 @@ public abstract class TextWidget extends Widget
     try
     {
       suppressEvents++;
-      ((JTextComponent) component).setCaretPosition(pos);
+      getComponent().setCaretPosition(pos);
     }
     finally
     {
@@ -117,7 +121,7 @@ public abstract class TextWidget extends Widget
   
   public int getSelectionStart()
   {
-    return ((JTextComponent) component).getSelectionStart();
+    return getComponent().getSelectionStart();
   }
   
   /**
@@ -129,7 +133,7 @@ public abstract class TextWidget extends Widget
     try
     {
       suppressEvents++;
-      ((JTextComponent) component).setSelectionStart(pos);
+      getComponent().setSelectionStart(pos);
     }
     finally
     {
@@ -144,7 +148,7 @@ public abstract class TextWidget extends Widget
   
   public int getSelectionEnd()
   {
-    return ((JTextComponent) component).getSelectionEnd();
+    return getComponent().getSelectionEnd();
   }
   
   /**
@@ -157,7 +161,7 @@ public abstract class TextWidget extends Widget
     try
     {
       suppressEvents++;
-      ((JTextComponent) component).setSelectionEnd(pos);
+      getComponent().setSelectionEnd(pos);
     }
     finally
     {
@@ -171,7 +175,7 @@ public abstract class TextWidget extends Widget
   
   public String getSelectedText()
   {
-    return ((JTextComponent) component).getSelectedText();
+    return getComponent().getSelectedText();
   }
   
   /**
@@ -180,7 +184,7 @@ public abstract class TextWidget extends Widget
   
   public boolean isEditable()
   {
-    return ((JTextComponent) component).isEditable();
+    return getComponent().isEditable();
   }
   
   /**
@@ -189,7 +193,7 @@ public abstract class TextWidget extends Widget
   
   public void setEditable(boolean editable)
   {
-    ((JTextComponent) component).setEditable(editable);
+    getComponent().setEditable(editable);
   }
   
   /**

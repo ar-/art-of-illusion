@@ -13,7 +13,7 @@ import javax.swing.*;
 
 public class BMenu extends WidgetContainer implements MenuWidget
 {
-  private ArrayList elements;
+  private ArrayList<MenuWidget> elements;
   
   static
   {
@@ -38,8 +38,8 @@ public class BMenu extends WidgetContainer implements MenuWidget
   public BMenu(String title)
   {
     component = createComponent();
-    elements = new ArrayList();
-    ((JMenu) component).setText(title);
+    elements = new ArrayList<MenuWidget>();
+    getComponent().setText(title);
   }
   
   /**
@@ -51,14 +51,20 @@ public class BMenu extends WidgetContainer implements MenuWidget
   {
     return new JMenu();
   }
-  
+
+
+  public JMenu getComponent()
+  {
+    return (JMenu) component;
+  }
+
   /**
    * Get the title of this menu which appears in the menu bar.
    */
   
   public String getText()
   {
-    return ((JMenu) component).getText();
+    return getComponent().getText();
   }
   
   /**
@@ -67,7 +73,7 @@ public class BMenu extends WidgetContainer implements MenuWidget
   
   public void setText(String title)
   {
-    ((JMenu) component).setText(title);
+    getComponent().setText(title);
   }
   
   /**
@@ -78,7 +84,7 @@ public class BMenu extends WidgetContainer implements MenuWidget
   
   public int getMnemonic()
   {
-    return ((JMenu) component).getMnemonic();
+    return getComponent().getMnemonic();
   }
   
   /**
@@ -89,7 +95,7 @@ public class BMenu extends WidgetContainer implements MenuWidget
   
   public void setMnemonic(int key)
   {
-    ((JMenu) component).setMnemonic(key);
+    getComponent().setMnemonic(key);
   }
 
   /**
@@ -116,7 +122,7 @@ public class BMenu extends WidgetContainer implements MenuWidget
     if (parent != null)
       parent.remove((Widget) widget);
     elements.add(index, widget);
-    ((JMenu) component).add(((Widget) widget).component, index);
+    getComponent().add(((Widget) widget).getComponent(), index);
     setAsParent((Widget) widget);
   }
 
@@ -144,16 +150,19 @@ public class BMenu extends WidgetContainer implements MenuWidget
   
   public MenuWidget getChild(int i)
   {
-    return (MenuWidget) elements.get(i);
+    return elements.get(i);
   }
   
   /**
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    return new ArrayList(elements);
+    ArrayList<Widget> children = new ArrayList<Widget>(elements.size());
+    for (MenuWidget widget : elements)
+      children.add((Widget) widget);
+    return children;
   }
   
   /**
@@ -162,8 +171,8 @@ public class BMenu extends WidgetContainer implements MenuWidget
   
   public void remove(Widget widget)
   {
-    elements.remove(widget);
-    ((JMenu) component).remove(widget.component);
+    elements.remove((MenuWidget) widget);
+    getComponent().remove(widget.getComponent());
     removeAsParent(widget);
   }
   
@@ -175,7 +184,7 @@ public class BMenu extends WidgetContainer implements MenuWidget
   {
     for (int i = 0; i < elements.size(); i++)
       removeAsParent((Widget) elements.get(i));
-    ((JMenu) component).removeAll();
+    getComponent().removeAll();
     elements.clear();
   }
   

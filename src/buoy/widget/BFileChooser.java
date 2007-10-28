@@ -82,7 +82,7 @@ public class BFileChooser extends Widget
     setMode(mode);
     setTitle(title);
     setDirectory(directory);
-    component.addPropertyChangeListener(new PropertyChangeListener() {
+    getComponent().addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent ev)
       {
         String name = ev.getPropertyName();
@@ -102,14 +102,19 @@ public class BFileChooser extends Widget
   {
     return new JFileChooser();
   }
-  
+
+  public JFileChooser getComponent()
+  {
+    return (JFileChooser) component;
+  }
+
   /**
    * Get the title displayed on the dialog.
    */
   
   public String getTitle()
   {
-    return ((JFileChooser) component).getDialogTitle();
+    return getComponent().getDialogTitle();
   }
   
   /**
@@ -118,7 +123,7 @@ public class BFileChooser extends Widget
   
   public void setTitle(String title)
   {
-    ((JFileChooser) component).setDialogTitle(title);
+    getComponent().setDialogTitle(title);
   }
   
   /**
@@ -137,7 +142,7 @@ public class BFileChooser extends Widget
   public void setMode(SelectionMode mode)
   {
     selectMode = mode;
-    ((JFileChooser) component).setFileSelectionMode(mode == SELECT_FOLDER ? JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);
+    getComponent().setFileSelectionMode(mode == SELECT_FOLDER ? JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);
   }
   
   /**
@@ -146,7 +151,7 @@ public class BFileChooser extends Widget
   
   public boolean isMultipleSelectionEnabled()
   {
-    return ((JFileChooser) component).isMultiSelectionEnabled();
+    return getComponent().isMultiSelectionEnabled();
   }
   
   /**
@@ -155,7 +160,7 @@ public class BFileChooser extends Widget
   
   public void setMultipleSelectionEnabled(boolean multiple)
   {
-    ((JFileChooser) component).setMultiSelectionEnabled(multiple);
+    getComponent().setMultiSelectionEnabled(multiple);
   }
   
   /**
@@ -164,7 +169,7 @@ public class BFileChooser extends Widget
   
   public FileFilter getFileFilter()
   {
-    return ((JFileChooser) component).getFileFilter();
+    return getComponent().getFileFilter();
   }
   
   /**
@@ -173,7 +178,7 @@ public class BFileChooser extends Widget
   
   public void setFileFilter(FileFilter filter)
   {
-    ((JFileChooser) component).setFileFilter(filter);
+    getComponent().setFileFilter(filter);
   }
   
   /**
@@ -182,7 +187,7 @@ public class BFileChooser extends Widget
   
   public File getDirectory()
   {
-    return ((JFileChooser) component).getCurrentDirectory();
+    return getComponent().getCurrentDirectory();
   }
   
   /**
@@ -191,7 +196,7 @@ public class BFileChooser extends Widget
   
   public void setDirectory(File directory)
   {
-    ((JFileChooser) component).setCurrentDirectory(directory);
+    getComponent().setCurrentDirectory(directory);
     lastDirectory = directory;
   }
   
@@ -205,7 +210,7 @@ public class BFileChooser extends Widget
   
   public File getSelectedFile()
   {
-    return ((JFileChooser) component).getSelectedFile();
+    return getComponent().getSelectedFile();
   }
   
   /**
@@ -214,7 +219,7 @@ public class BFileChooser extends Widget
   
   public void setSelectedFile(File file)
   {
-    ((JFileChooser) component).setSelectedFile(file);
+    getComponent().setSelectedFile(file);
   }
   
   /**
@@ -224,7 +229,7 @@ public class BFileChooser extends Widget
   
   public File [] getSelectedFiles()
   {
-    return ((JFileChooser) component).getSelectedFiles();
+    return getComponent().getSelectedFiles();
   }
 
   /**
@@ -237,7 +242,7 @@ public class BFileChooser extends Widget
   {
     if (!isMultipleSelectionEnabled())
       throw new IllegalArgumentException();
-    ((JFileChooser) component).setSelectedFiles(files);
+    getComponent().setSelectedFiles(files);
   }
   
   /**
@@ -252,7 +257,7 @@ public class BFileChooser extends Widget
   
   public boolean showDialog(Widget parent)
   {
-    JFileChooser jfc = (JFileChooser) component;
+    JFileChooser jfc = getComponent();
     Component parentComponent = (parent == null ? null : parent.getComponent());
     int result;
     if (selectMode == SAVE_FILE)

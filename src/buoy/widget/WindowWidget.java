@@ -19,16 +19,22 @@ public abstract class WindowWidget extends WidgetContainer
   private BButton defaultButton;
   private static ThreadLocal encodingInProgress = new ThreadLocal();
 
+
+  public Window getComponent()
+  {
+    return (Window) component;
+  }
+
   /**
    * Set the position and size of the window, then re-layout the window contents.
    */
   
   public void setBounds(Rectangle bounds)
   {
-    if (encodingInProgress.get() != Boolean.TRUE && !component.isDisplayable())
-      component.addNotify();
+    if (encodingInProgress.get() != Boolean.TRUE && !getComponent().isDisplayable())
+      getComponent().addNotify();
     lastSize = new Dimension(bounds.width, bounds.height);
-    component.setBounds(bounds);
+    getComponent().setBounds(bounds);
   }
   
   /**
@@ -53,8 +59,8 @@ public abstract class WindowWidget extends WidgetContainer
     {
       if (content.getParent() != null)
         content.getParent().remove(content);
-      JComponent contentPane = (JComponent) ((RootPaneContainer) component).getContentPane();
-      contentPane.add(content.component);
+      JComponent contentPane = (JComponent) ((RootPaneContainer) getComponent()).getContentPane();
+      contentPane.add(content.getComponent());
       setAsParent(content);
     }
   }
@@ -66,9 +72,9 @@ public abstract class WindowWidget extends WidgetContainer
   
   public void pack()
   {
-    if (!component.isDisplayable())
-      component.addNotify();
-    JComponent contentPane = (JComponent) ((RootPaneContainer) component).getContentPane();
+    if (!getComponent().isDisplayable())
+      getComponent().addNotify();
+    JComponent contentPane = (JComponent) ((RootPaneContainer) getComponent()).getContentPane();
     if (content == null)
       contentPane.setPreferredSize(new Dimension(0, 0));
     else
@@ -89,11 +95,11 @@ public abstract class WindowWidget extends WidgetContainer
   {
     if (content != null)
     {
-      Container contentPane = ((RootPaneContainer) component).getContentPane();
+      Container contentPane = ((RootPaneContainer) getComponent()).getContentPane();
       contentPane.validate();
       Dimension max = content.getMaximumSize();
       Dimension total = contentPane.getSize();
-      content.component.setBounds(0, 0, Math.min(max.width, total.width), Math.min(max.height, total.height));
+      content.getComponent().setBounds(0, 0, Math.min(max.width, total.width), Math.min(max.height, total.height));
       if (content instanceof WidgetContainer)
         ((WidgetContainer) content).layoutChildren();
     }
@@ -105,7 +111,7 @@ public abstract class WindowWidget extends WidgetContainer
   
   public void dispose()
   {
-    ((Window) component).dispose();
+    getComponent().dispose();
   }
   
   /**
@@ -119,7 +125,7 @@ public abstract class WindowWidget extends WidgetContainer
   
   public void toFront()
   {
-    ((Window) getComponent()).toFront();
+    getComponent().toFront();
   }
   
   /**
@@ -133,7 +139,7 @@ public abstract class WindowWidget extends WidgetContainer
   
   public void toBack()
   {
-    ((Window) getComponent()).toBack();
+    getComponent().toBack();
   }
   
   /**
@@ -148,7 +154,7 @@ public abstract class WindowWidget extends WidgetContainer
       
       return mockVisible.booleanValue();
     }
-    return component.isVisible();
+    return getComponent().isVisible();
   }
   
   /**

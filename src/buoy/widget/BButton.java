@@ -44,7 +44,7 @@ public class BButton extends Widget
   public BButton()
   {
     component = createComponent();
-    ((JButton) component).addActionListener(new ActionListener() {
+    getComponent().addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ev)
       {
         dispatchEvent(new CommandEvent(BButton.this, ev.getWhen(), ev.getModifiers(), ((JButton) component).getActionCommand()));
@@ -61,7 +61,7 @@ public class BButton extends Widget
   public BButton(String text)
   {
     this();
-    ((JButton) component).setText(text);
+    getComponent().setText(text);
   }
 
   /**
@@ -73,7 +73,7 @@ public class BButton extends Widget
   public BButton(Icon icon)
   {
     this();
-    ((JButton) component).setIcon(icon);
+    getComponent().setIcon(icon);
   }
 
   /**
@@ -86,8 +86,8 @@ public class BButton extends Widget
   public BButton(String text, Icon icon)
   {
     this();
-    ((JButton) component).setText(text);
-    ((JButton) component).setIcon(icon);
+    getComponent().setText(text);
+    getComponent().setIcon(icon);
   }
   
   /**
@@ -100,13 +100,18 @@ public class BButton extends Widget
     return new JButton();
   }
 
+  public JButton getComponent()
+  {
+    return (JButton) component;
+  }
+
   /**
    * Get the text being displayed on the button.  This may be null.
    */
   
   public String getText()
   {
-    return ((JButton) component).getText();
+    return getComponent().getText();
   }
 
   /**
@@ -115,7 +120,7 @@ public class BButton extends Widget
   
   public void setText(String text)
   {
-    ((JButton) component).setText(text);
+    getComponent().setText(text);
     invalidateSize();
   }
 
@@ -125,7 +130,7 @@ public class BButton extends Widget
   
   public Icon getIcon()
   {
-    return ((JButton) component).getIcon();
+    return getComponent().getIcon();
   }
 
   /**
@@ -134,7 +139,7 @@ public class BButton extends Widget
   
   public void setIcon(Icon icon)
   {
-    ((JButton) component).setIcon(icon);
+    getComponent().setIcon(icon);
     invalidateSize();
   }
 
@@ -144,7 +149,7 @@ public class BButton extends Widget
   
   public String getActionCommand()
   {
-    return ((JButton) component).getActionCommand();
+    return getComponent().getActionCommand();
   }
 
   /**
@@ -153,7 +158,7 @@ public class BButton extends Widget
   
   public void setActionCommand(String command)
   {
-    ((JButton) component).setActionCommand(command);
+    getComponent().setActionCommand(command);
   }
 
   /**
@@ -173,8 +178,8 @@ public class BButton extends Widget
 
   public Position getTextPosition()
   {
-    int hpos = ((JButton) component).getHorizontalTextPosition();
-    int vpos = ((JButton) component).getVerticalTextPosition();
+    int hpos = getComponent().getHorizontalTextPosition();
+    int vpos = getComponent().getVerticalTextPosition();
     return Position.get(hpos, vpos);
   }
 
@@ -187,7 +192,7 @@ public class BButton extends Widget
   public void setTextPosition(Position position)
   {
     int pos = position.value;
-    JButton jb = (JButton) component;
+    JButton jb = getComponent();
     if ((pos&NORTH.value) != 0)
       jb.setVerticalTextPosition(SwingConstants.TOP);
     else if ((pos&SOUTH.value) != 0)

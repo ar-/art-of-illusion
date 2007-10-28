@@ -53,7 +53,7 @@ public class BColorChooser extends Widget
     component = createComponent();
     setColor(color);
     setTitle(title);
-    ((JColorChooser) component).getSelectionModel().addChangeListener(new ChangeListener() {
+    getComponent().getSelectionModel().addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent ev)
       {
         dispatchEvent(new ValueChangedEvent(BColorChooser.this));
@@ -70,7 +70,12 @@ public class BColorChooser extends Widget
   {
     return new JColorChooser();
   }
-  
+
+  public JColorChooser getComponent()
+  {
+    return (JColorChooser) component;
+  }
+
   /**
    * Get the title displayed on the dialog.
    */
@@ -95,7 +100,7 @@ public class BColorChooser extends Widget
   
   public Color getColor()
   {
-    return ((JColorChooser) component).getColor();
+    return getComponent().getColor();
   }
   
   /**
@@ -104,7 +109,7 @@ public class BColorChooser extends Widget
   
   public void setColor(Color color)
   {
-    ((JColorChooser) component).setColor(color);
+    getComponent().setColor(color);
   }
   
   /**
@@ -117,7 +122,7 @@ public class BColorChooser extends Widget
   
   public boolean showDialog(Widget parent)
   {
-    Color color = JColorChooser.showDialog(parent.component, dlgTitle, getColor());
+    Color color = JColorChooser.showDialog(parent.getComponent(), dlgTitle, getColor());
     if (color == null)
       return false;
     setColor(color);

@@ -2,7 +2,6 @@ package buoy.widget;
 
 import buoy.event.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -86,13 +85,18 @@ public class BToolTip extends Widget
     return new JToolTip();
   }
 
+  public JToolTip getComponent()
+  {
+    return (JToolTip) component;
+  }
+
   /**
    * Get the text to display on the tool tip.
    */
   
   public String getText()
   {
-    return ((JToolTip) component).getTipText();
+    return getComponent().getTipText();
   }
 
   /**
@@ -101,7 +105,7 @@ public class BToolTip extends Widget
   
   public void setText(String text)
   {
-    ((JToolTip) component).setTipText(text);
+    getComponent().setTipText(text);
     invalidateSize();
   }
   
@@ -116,7 +120,7 @@ public class BToolTip extends Widget
   {
     hide();
     Point basePos = widget.getComponent().getLocationOnScreen();
-    tipWindow = PopupFactory.getSharedInstance().getPopup(widget.component, component, basePos.x+where.x, basePos.y+where.y);
+    tipWindow = PopupFactory.getSharedInstance().getPopup(widget.getComponent(), getComponent(), basePos.x+where.x, basePos.y+where.y);
     tipWindow.show();
     currentTip = this;
   }

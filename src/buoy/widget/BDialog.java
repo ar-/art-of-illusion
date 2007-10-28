@@ -48,7 +48,7 @@ public class BDialog extends WindowWidget
   {
     component = createComponent(null, null, false);
     initInternal();
-    ((JDialog) component).setTitle(title);
+    getComponent().setTitle(title);
   }
 
   /**
@@ -100,15 +100,20 @@ public class BDialog extends WindowWidget
     else
       throw new IllegalArgumentException("parent must be a BFrame or BDialog");
   }
-  
+
+  public JDialog getComponent()
+  {
+    return (JDialog) component;
+  }
+
   /**
    * Perform internal initialization.
    */
   
   private void initInternal()
   {
-    ((JDialog) component).getContentPane().setLayout(null);
-    ((JDialog) component).setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    getComponent().getContentPane().setLayout(null);
+    getComponent().setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
   }
 
   /**
@@ -124,9 +129,9 @@ public class BDialog extends WindowWidget
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList ls = new ArrayList(3);
+    ArrayList<Widget> ls = new ArrayList<Widget>(3);
     if (menubar != null)
       ls.add(menubar);
     if (content != null)
@@ -156,7 +161,7 @@ public class BDialog extends WindowWidget
     if (menus.getParent() != null)
       menus.getParent().remove(menus);
     menubar = menus;
-    ((JDialog) component).setJMenuBar((JMenuBar) menubar.component);
+    getComponent().setJMenuBar((JMenuBar) menubar.getComponent());
     setAsParent(menubar);
   }
 
@@ -168,13 +173,13 @@ public class BDialog extends WindowWidget
   {
     if (menubar == widget)
     {
-      ((JDialog) component).setJMenuBar(null);
+      getComponent().setJMenuBar(null);
       removeAsParent(menubar);
       menubar = null;
     }
     else if (content == widget)
     {
-      ((JDialog) component).getContentPane().remove(widget.component);
+      getComponent().getContentPane().remove(widget.getComponent());
       removeAsParent(content);
       content = null;
     }
@@ -198,7 +203,7 @@ public class BDialog extends WindowWidget
   
   public String getTitle()
   {
-    return ((JDialog) component).getTitle();
+    return getComponent().getTitle();
   }
   
   /**
@@ -207,7 +212,7 @@ public class BDialog extends WindowWidget
   
   public void setTitle(String title)
   {
-    ((JDialog) component).setTitle(title);
+    getComponent().setTitle(title);
   }
   
   /**
@@ -217,7 +222,7 @@ public class BDialog extends WindowWidget
   
   public void setModal(boolean modal)
   {
-    ((JDialog) component).setModal(modal);
+    getComponent().setModal(modal);
   }
   
   /**
@@ -226,7 +231,7 @@ public class BDialog extends WindowWidget
   
   public boolean isModal()
   {
-    return ((JDialog) component).isModal();
+    return getComponent().isModal();
   }
   
   /**
@@ -235,7 +240,7 @@ public class BDialog extends WindowWidget
   
   public boolean isResizable()
   {
-    return ((JDialog) component).isResizable();
+    return getComponent().isResizable();
   }
   
   /**
@@ -244,7 +249,7 @@ public class BDialog extends WindowWidget
   
   public void setResizable(boolean resizable)
   {
-    ((JDialog) component).setResizable(resizable);
+    getComponent().setResizable(resizable);
   }
 
   /**
@@ -315,9 +320,9 @@ public class BDialog extends WindowWidget
     {
       super.validate();
       layoutChildren();
-      if (!component.getSize().equals(lastSize))
+      if (!BDialog.this.getComponent().getSize().equals(lastSize))
       {
-        lastSize = component.getSize();
+        lastSize = BDialog.this.getComponent().getSize();
         EventQueue.invokeLater(new Runnable()
         {
           public void run()

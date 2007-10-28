@@ -33,7 +33,7 @@ public class BWindow extends WindowWidget
   public BWindow()
   {
     component = createComponent();
-    ((JWindow) component).getContentPane().setLayout(null);
+    getComponent().getContentPane().setLayout(null);
   }
   
   /**
@@ -44,6 +44,11 @@ public class BWindow extends WindowWidget
   protected JWindow createComponent()
   {
     return new BWindowComponent();
+  }
+
+  public JWindow getComponent()
+  {
+    return (JWindow) component;
   }
 
   /**
@@ -59,9 +64,9 @@ public class BWindow extends WindowWidget
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList ls = new ArrayList(1);
+    ArrayList<Widget> ls = new ArrayList<Widget>(1);
     if (content != null)
       ls.add(content);
     return ls;
@@ -75,7 +80,7 @@ public class BWindow extends WindowWidget
   {
     if (content == widget)
     {
-      ((JWindow) component).getContentPane().remove(widget.component);
+      getComponent().getContentPane().remove(widget.getComponent());
       removeAsParent(content);
       content = null;
     }
@@ -120,9 +125,9 @@ public class BWindow extends WindowWidget
     {
       super.validate();
       layoutChildren();
-      if (!component.getSize().equals(lastSize))
+      if (!BWindow.this.getComponent().getSize().equals(lastSize))
       {
-        lastSize = component.getSize();
+        lastSize = BWindow.this.getComponent().getSize();
         EventQueue.invokeLater(new Runnable()
         {
           public void run()

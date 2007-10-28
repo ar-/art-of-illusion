@@ -30,7 +30,7 @@ public class FormContainer extends WidgetContainer
 {
   private double rowWeight[], colWeight[];
   private int minRowSize[], prefRowSize[], minColSize[], prefColSize[];
-  private ArrayList child;
+  private ArrayList<ChildInfo> child;
   private LayoutInfo defaultLayout;
   
   static
@@ -51,10 +51,15 @@ public class FormContainer extends WidgetContainer
     this.colWeight = colWeight;
     this.rowWeight = rowWeight;
     component = new WidgetContainerPanel(this);
-    child = new ArrayList();
+    child = new ArrayList<ChildInfo>();
     defaultLayout = new LayoutInfo();
   }
-  
+
+  public JPanel getComponent()
+  {
+    return (JPanel) component;
+  }
+
   /**
    * Create a new FormContainer.  All of the row and column weights default to 1.0.
    *
@@ -86,18 +91,18 @@ public class FormContainer extends WidgetContainer
   
   public Widget getChild(int i)
   {
-    return ((ChildInfo) child.get(i)).widget;
+    return child.get(i).widget;
   }
 
   /**
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList list = new ArrayList(child.size());
+    ArrayList<Widget> list = new ArrayList<Widget>(child.size());
     for (int i = 0; i < child.size(); i++)
-      list.add(((ChildInfo) child.get(i)).widget);
+      list.add(child.get(i).widget);
     return list;
   }
   
@@ -139,7 +144,7 @@ public class FormContainer extends WidgetContainer
     {
       for (int i = child.size()-1; i >= 0; i--)
       {
-        ChildInfo info = (ChildInfo) child.get(i);
+        ChildInfo info = child.get(i);
         if (info.y+info.height > rows)
           remove(i);
       }
@@ -169,7 +174,7 @@ public class FormContainer extends WidgetContainer
     {
       for (int i = child.size()-1; i >= 0; i--)
       {
-        ChildInfo info = (ChildInfo) child.get(i);
+        ChildInfo info = child.get(i);
         if (info.x+info.width > columns)
           remove(i);
       }
@@ -236,13 +241,13 @@ public class FormContainer extends WidgetContainer
   {
     if (minColSize == null)
       calculateSizes();
-    Dimension size = component.getSize();
+    Dimension size = getComponent().getSize();
     int rowPos[] = calculatePositions(minRowSize, prefRowSize, rowWeight, size.height);
     int colPos[] = calculatePositions(minColSize, prefColSize, colWeight, size.width);
     Rectangle cell = new Rectangle();
     for (int i = 0; i < child.size(); i++)
     {
-      ChildInfo info = (ChildInfo) child.get(i);
+      ChildInfo info = child.get(i);
       LayoutInfo layout = (info.layout == null ? defaultLayout : info.layout);
       cell.x = (info.x == 0 ? 0 : colPos[info.x-1]);
       cell.y = (info.y == 0 ? 0 : rowPos[info.y-1]);
@@ -382,7 +387,7 @@ public class FormContainer extends WidgetContainer
     if (widget.getParent() != null)
       widget.getParent().remove(widget);
     child.add(new ChildInfo(widget, layout, col, row, width, height));
-    ((JPanel) component).add(widget.component);
+    getComponent().add(widget.getComponent());
     setAsParent(widget);
     invalidateSize();
   }
@@ -397,7 +402,7 @@ public class FormContainer extends WidgetContainer
   
   public LayoutInfo getChildLayout(int index)
   {
-    return ((ChildInfo) child.get(index)).layout;
+    return child.get(index).layout;
   }
 
   /**
@@ -409,7 +414,7 @@ public class FormContainer extends WidgetContainer
   
   public void setChildLayout(int index, LayoutInfo layout)
   {
-    ((ChildInfo) child.get(index)).layout = layout;
+    child.get(index).layout = layout;
     invalidateSize();
   }
   
@@ -427,7 +432,7 @@ public class FormContainer extends WidgetContainer
     int index = getWidgetIndex(widget);
     if (index == -1)
       return null;
-    return ((ChildInfo) child.get(index)).layout;
+    return child.get(index).layout;
   }
   
   /**
@@ -442,7 +447,7 @@ public class FormContainer extends WidgetContainer
     int index = getWidgetIndex(widget);
     if (index == -1)
       return;
-    ((ChildInfo) child.get(index)).layout = layout;
+    child.get(index).layout = layout;
     invalidateSize();
   }
 
@@ -474,7 +479,7 @@ public class FormContainer extends WidgetContainer
   
   public Rectangle getChildCells(int index)
   {
-    ChildInfo info = (ChildInfo) child.get(index);
+    ChildInfo info = child.get(index);
     return new Rectangle(info.x, info.y, info.width, info.height);
   }
   
@@ -487,7 +492,7 @@ public class FormContainer extends WidgetContainer
   
   public void setChildCells(int index, Rectangle cells)
   {
-    ChildInfo info = (ChildInfo) child.get(index);
+    ChildInfo info = child.get(index);
     info.x = cells.x;
     info.y = cells.y;
     info.width = cells.width;
@@ -547,8 +552,8 @@ public class FormContainer extends WidgetContainer
   
   public void remove(int index)
   {
-    Widget w = ((ChildInfo) child.get(index)).widget;
-    ((JPanel) component).remove(w.component);
+    Widget w = child.get(index).widget;
+    getComponent().remove(w.getComponent());
     child.remove(index);
     removeAsParent(w);
     invalidateSize();
@@ -560,9 +565,9 @@ public class FormContainer extends WidgetContainer
   
   public void removeAll()
   {
-    ((JPanel) component).removeAll();
+    getComponent().removeAll();
     for (int i = 0; i < child.size(); i++)
-      removeAsParent(((ChildInfo) child.get(i)).widget);
+      removeAsParent(child.get(i).widget);
     child.clear();
     invalidateSize();
   }
@@ -577,7 +582,7 @@ public class FormContainer extends WidgetContainer
   public int getWidgetIndex(Widget widget)
   {
     for (int i = 0; i < child.size(); i++)
-      if (((ChildInfo) child.get(i)).widget == widget)
+      if (child.get(i).widget == widget)
         return i;
     return -1;
   }
@@ -634,12 +639,12 @@ public class FormContainer extends WidgetContainer
   {
     Dimension dim[] = new Dimension [child.size()];
     for (int i = 0; i < dim.length; i++)
-      dim[i] = ((ChildInfo) child.get(i)).widget.getMinimumSize();
+      dim[i] = child.get(i).widget.getMinimumSize();
     minRowSize = calculateRequiredSizes(dim, true);
     minColSize = calculateRequiredSizes(dim, false);
     for (int i = 0; i < dim.length; i++)
     {
-      ChildInfo info = (ChildInfo) child.get(i);
+      ChildInfo info = child.get(i);
       LayoutInfo layout = (info.layout == null ? defaultLayout : info.layout);
       dim[i] = layout.getPreferredSize(info.widget);
     }
@@ -659,10 +664,10 @@ public class FormContainer extends WidgetContainer
   {
     // Build a linked list of size requirements of every child.
     
-    LinkedList requiredList = new LinkedList();
+    LinkedList<int[]> requiredList = new LinkedList<int[]>();
     for (int i = 0; i < dim.length; i++)
     {
-      ChildInfo info = (ChildInfo) child.get(i);
+      ChildInfo info = child.get(i);
       if (row)
         requiredList.addLast(new int [] {info.y, info.height, dim[i].height});
       else
@@ -677,10 +682,10 @@ public class FormContainer extends WidgetContainer
     {
       // Apply constraints for all children which occupy currentWidth rows or columns.
       
-      Iterator iter = requiredList.iterator();
+      Iterator<int[]> iter = requiredList.iterator();
       while (iter.hasNext())
       {
-        int req[] = (int []) iter.next();
+        int req[] = iter.next();
         if (req[1] != currentWidth)
           continue;
         iter.remove();

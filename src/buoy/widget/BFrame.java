@@ -36,8 +36,8 @@ public class BFrame extends WindowWidget
   public BFrame()
   {
     component = createComponent();
-    ((JFrame) component).getContentPane().setLayout(null);
-    ((JFrame) component).setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    getComponent().getContentPane().setLayout(null);
+    getComponent().setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
   }
 
   /**
@@ -47,7 +47,7 @@ public class BFrame extends WindowWidget
   public BFrame(String title)
   {
     this();
-    ((BFrameComponent) component).setTitle(title);
+    getComponent().setTitle(title);
   }
   
   /**
@@ -58,6 +58,11 @@ public class BFrame extends WindowWidget
   protected JFrame createComponent()
   {
     return new BFrameComponent();
+  }
+
+  public JFrame getComponent()
+  {
+    return (JFrame) component;
   }
 
   /**
@@ -73,9 +78,9 @@ public class BFrame extends WindowWidget
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList ls = new ArrayList(3);
+    ArrayList<Widget> ls = new ArrayList<Widget>(3);
     if (menubar != null)
       ls.add(menubar);
     if (content != null)
@@ -105,7 +110,7 @@ public class BFrame extends WindowWidget
     if (menus.getParent() != null)
       menus.getParent().remove(menus);
     menubar = menus;
-    ((JFrame) component).setJMenuBar((JMenuBar) menubar.component);
+    getComponent().setJMenuBar(menubar.getComponent());
     setAsParent(menubar);
   }
 
@@ -117,13 +122,13 @@ public class BFrame extends WindowWidget
   {
     if (menubar == widget)
     {
-      ((JFrame) component).setJMenuBar(null);
+      getComponent().setJMenuBar(null);
       removeAsParent(menubar);
       menubar = null;
     }
     else if (content == widget)
     {
-      ((JFrame) component).getContentPane().remove(widget.component);
+      getComponent().getContentPane().remove(widget.getComponent());
       removeAsParent(content);
       content = null;
     }
@@ -147,7 +152,7 @@ public class BFrame extends WindowWidget
   
   public String getTitle()
   {
-    return ((JFrame) component).getTitle();
+    return getComponent().getTitle();
   }
   
   /**
@@ -156,7 +161,7 @@ public class BFrame extends WindowWidget
   
   public void setTitle(String title)
   {
-    ((JFrame) component).setTitle(title);
+    getComponent().setTitle(title);
   }
 
   /**
@@ -165,7 +170,7 @@ public class BFrame extends WindowWidget
   
   public boolean isResizable()
   {
-    return ((JFrame) component).isResizable();
+    return getComponent().isResizable();
   }
   
   /**
@@ -174,7 +179,7 @@ public class BFrame extends WindowWidget
   
   public void setResizable(boolean resizable)
   {
-    ((JFrame) component).setResizable(resizable);
+    getComponent().setResizable(resizable);
   }
   
   /**
@@ -185,7 +190,7 @@ public class BFrame extends WindowWidget
   
   public boolean isIconified()
   {
-    return ((((JFrame) component).getExtendedState()&Frame.ICONIFIED) != 0);
+    return ((getComponent().getExtendedState()&Frame.ICONIFIED) != 0);
   }
   
   /**
@@ -196,7 +201,7 @@ public class BFrame extends WindowWidget
   
   public void setIconified(boolean iconified)
   {
-    JFrame jf = (JFrame) component;
+    JFrame jf = getComponent();
     int state = jf.getExtendedState();
     if (iconified)
       jf.setExtendedState(state|Frame.ICONIFIED);
@@ -232,7 +237,7 @@ public class BFrame extends WindowWidget
   public void setIcon(ImageIcon icon)
   {
     this.icon = icon;
-    ((JFrame) component).setIconImage(icon.getImage());
+    getComponent().setIconImage(icon.getImage());
   }
   
   /**
@@ -243,7 +248,7 @@ public class BFrame extends WindowWidget
   
   public boolean isMaximized()
   {
-    return ((((JFrame) component).getExtendedState()&Frame.MAXIMIZED_BOTH) != 0);
+    return ((getComponent().getExtendedState()&Frame.MAXIMIZED_BOTH) != 0);
   }
   
   /**
@@ -254,13 +259,13 @@ public class BFrame extends WindowWidget
   
   public void setMaximized(boolean maximized)
   {
-    JFrame jf = (JFrame) component;
+    JFrame jf = getComponent();
     int state = jf.getExtendedState();
     if (maximized)
       jf.setExtendedState(state|Frame.MAXIMIZED_BOTH);
     else
       jf.setExtendedState(state-state&Frame.MAXIMIZED_BOTH);
-    lastSize = component.getSize();
+    lastSize = jf.getSize();
   }
 
   /**
@@ -292,9 +297,9 @@ public class BFrame extends WindowWidget
     {
       super.validate();
       layoutChildren();
-      if (!component.getSize().equals(lastSize))
+      if (!BFrame.this.getComponent().getSize().equals(lastSize))
       {
-        lastSize = component.getSize();
+        lastSize = BFrame.this.getComponent().getSize();
         EventQueue.invokeLater(new Runnable()
         {
           public void run()

@@ -63,7 +63,7 @@ public class BScrollBar extends Widget
   public BScrollBar(int value, int extent, int minimum, int maximum, Orientation orientation)
   {
     component = createComponent(orientation);
-    ((JScrollBar) component).setModel(model = new DefaultBoundedRangeModel(value, extent, minimum, maximum));
+    getComponent().setModel(model = new DefaultBoundedRangeModel(value, extent, minimum, maximum));
   }
   
   /**
@@ -78,7 +78,12 @@ public class BScrollBar extends Widget
   {
     return new BScrollBarComponent(orientation);
   }
-  
+
+  public JScrollBar getComponent()
+  {
+    return (JScrollBar) component;
+  }
+
   /**
    * Get the minimum value of the range represented by this BScrollBar.
    */
@@ -165,7 +170,7 @@ public class BScrollBar extends Widget
   
   public Orientation getOrientation()
   {
-    int orient = ((JScrollBar) component).getOrientation();
+    int orient = getComponent().getOrientation();
     return (orient == HORIZONTAL.value ? HORIZONTAL : VERTICAL);
   }
   
@@ -175,7 +180,7 @@ public class BScrollBar extends Widget
   
   public void setOrientation(Orientation orientation)
   {
-    ((JScrollBar) component).setOrientation(orientation.value);
+    getComponent().setOrientation(orientation.value);
     invalidateSize();
   }
   
@@ -186,7 +191,7 @@ public class BScrollBar extends Widget
   
   public int getUnitIncrement()
   {
-    return ((JScrollBar) component).getUnitIncrement();
+    return getComponent().getUnitIncrement();
   }
   
   /**
@@ -210,7 +215,7 @@ public class BScrollBar extends Widget
   
   public void setUnitIncrement(int increment)
   {
-    ((JScrollBar) component).setUnitIncrement(increment);
+    getComponent().setUnitIncrement(increment);
   }
   
   /**
@@ -220,7 +225,7 @@ public class BScrollBar extends Widget
   
   public int getBlockIncrement()
   {
-    return ((JScrollBar) component).getBlockIncrement();
+    return getComponent().getBlockIncrement();
   }
   
   /**
@@ -244,7 +249,7 @@ public class BScrollBar extends Widget
   
   public void setBlockIncrement(int increment)
   {
-    ((JScrollBar) component).setBlockIncrement(increment);
+    getComponent().setBlockIncrement(increment);
   }
   
   /**
@@ -262,7 +267,7 @@ public class BScrollBar extends Widget
     public void adjustmentValueChanged(AdjustmentEvent ev)
     {
       if (suppressEvents == 0)
-        BScrollBar.this.dispatchEvent(new ValueChangedEvent(BScrollBar.this, ((JScrollBar) component).getValueIsAdjusting()));
+        BScrollBar.this.dispatchEvent(new ValueChangedEvent(BScrollBar.this, BScrollBar.this.getComponent().getValueIsAdjusting()));
     }
     
     public int getUnitIncrement(int direction)

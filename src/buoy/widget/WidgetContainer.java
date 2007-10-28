@@ -33,7 +33,7 @@ public abstract class WidgetContainer extends Widget
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public abstract Collection getChildren();
+  public abstract Collection<Widget> getChildren();
   
   /**
    * Remove a child Widget from this container.

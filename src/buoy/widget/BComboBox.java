@@ -33,7 +33,7 @@ public class BComboBox extends Widget
   public BComboBox()
   {
     component = createComponent();
-    ((JComboBox) component).addActionListener(new ActionListener() {
+    getComponent().addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ev)
       {
         if (suppressEvents == 0)
@@ -70,7 +70,7 @@ public class BComboBox extends Widget
   public BComboBox(ComboBoxModel model)
   {
     this();
-    ((JComboBox) component).setModel(model);
+    getComponent().setModel(model);
   }
   
   /**
@@ -88,7 +88,12 @@ public class BComboBox extends Widget
       }
     };
   }
-  
+
+  public JComboBox getComponent()
+  {
+    return (JComboBox) component;
+  }
+
   /**
    * Get whether this combo box is editable, allowing the user to type in values other than those in
    * the popup list.
@@ -96,7 +101,7 @@ public class BComboBox extends Widget
   
   public boolean isEditable()
   {
-    return ((JComboBox) component).isEditable();
+    return getComponent().isEditable();
   }
   
   /**
@@ -106,7 +111,7 @@ public class BComboBox extends Widget
   
   public void setEditable(boolean editable)
   {
-    ((JComboBox) component).setEditable(editable);
+    getComponent().setEditable(editable);
   }
   
   /**
@@ -121,7 +126,7 @@ public class BComboBox extends Widget
     try
     {
       suppressEvents++;
-      ((JComboBox) component).setModel(new DefaultComboBoxModel(o));
+      getComponent().setModel(new DefaultComboBoxModel(o));
     }
     finally
     {
@@ -148,7 +153,7 @@ public class BComboBox extends Widget
   
   public ComboBoxModel getModel()
   {
-    return ((JComboBox) component).getModel();
+    return getComponent().getModel();
   }
   
   /**
@@ -160,7 +165,7 @@ public class BComboBox extends Widget
     try
     {
       suppressEvents++;
-      ((JComboBox) component).setModel(model);
+      getComponent().setModel(model);
     }
     finally
     {
@@ -179,7 +184,7 @@ public class BComboBox extends Widget
     try
     {
       suppressEvents++;
-      ((JComboBox) component).addItem(o);
+      getComponent().addItem(o);
     }
     finally
     {
@@ -199,7 +204,7 @@ public class BComboBox extends Widget
     try
     {
       suppressEvents++;
-      ((JComboBox) component).insertItemAt(o, index);
+      getComponent().insertItemAt(o, index);
     }
     finally
     {
@@ -231,7 +236,7 @@ public class BComboBox extends Widget
     try
     {
       suppressEvents++;
-      ((JComboBox) component).removeItemAt(index);
+      getComponent().removeItemAt(index);
     }
     finally
     {
@@ -248,7 +253,7 @@ public class BComboBox extends Widget
     try
     {
       suppressEvents++;
-      ((JComboBox) component).removeAllItems();
+      getComponent().removeAllItems();
     }
     finally
     {
@@ -262,7 +267,7 @@ public class BComboBox extends Widget
   
   public int getItemCount()
   {
-    return ((JComboBox) component).getItemCount();
+    return getComponent().getItemCount();
   }
   
   /**
@@ -271,7 +276,7 @@ public class BComboBox extends Widget
   
   public Object getItem(int index)
   {
-    return ((JComboBox) component).getItemAt(index);
+    return getComponent().getItemAt(index);
   }
 
   /**
@@ -281,7 +286,7 @@ public class BComboBox extends Widget
   
   public int getPreferredVisibleRows()
   {
-    return ((JComboBox) component).getMaximumRowCount();
+    return getComponent().getMaximumRowCount();
   }
   
   /**
@@ -291,7 +296,7 @@ public class BComboBox extends Widget
   
   public void setPreferredVisibleRows(int rows)
   {
-    ((JComboBox) component).setMaximumRowCount(rows);
+    getComponent().setMaximumRowCount(rows);
   }
 
   /**
@@ -301,7 +306,7 @@ public class BComboBox extends Widget
   
   public int getSelectedIndex()
   {
-    return ((JComboBox) component).getSelectedIndex();
+    return getComponent().getSelectedIndex();
   }
 
   /**
@@ -313,7 +318,7 @@ public class BComboBox extends Widget
     try
     {
       suppressEvents++;
-      ((JComboBox) component).setSelectedIndex(index);
+      getComponent().setSelectedIndex(index);
     }
     finally
     {
@@ -328,7 +333,7 @@ public class BComboBox extends Widget
   
   public Object getSelectedValue()
   {
-    return ((JComboBox) component).getSelectedItem();
+    return getComponent().getSelectedItem();
   }
 
   /**
@@ -341,7 +346,7 @@ public class BComboBox extends Widget
     try
     {
       suppressEvents++;
-      ((JComboBox) component).setSelectedItem(value);
+      getComponent().setSelectedItem(value);
     }
     finally
     {

@@ -3,8 +3,6 @@ package buoy.widget;
 import buoy.event.*;
 import buoy.xml.*;
 import buoy.xml.delegate.*;
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -54,12 +52,12 @@ public class BSlider extends Widget
   public BSlider(int value, int minimum, int maximum, Orientation orientation)
   {
     component = createComponent(orientation);
-    ((JSlider) component).setModel(new DefaultBoundedRangeModel(value, 0, minimum, maximum));
-    ((JSlider) component).addChangeListener(new ChangeListener() {
+    getComponent().setModel(new DefaultBoundedRangeModel(value, 0, minimum, maximum));
+    getComponent().addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent ev)
       {
         if (suppressEvents == 0)
-          dispatchEvent(new ValueChangedEvent(BSlider.this, ((JSlider) component).getValueIsAdjusting()));
+          dispatchEvent(new ValueChangedEvent(BSlider.this, getComponent().getValueIsAdjusting()));
       }
     });
     setMajorTickSpacing(20);
@@ -78,14 +76,19 @@ public class BSlider extends Widget
   {
     return new JSlider(orientation.value);
   }
-  
+
+  public JSlider getComponent()
+  {
+    return (JSlider) component;
+  }
+
   /**
    * Get the minimum value of the range represented by this BSlider.
    */
   
   public int getMinimum()
   {
-    return ((JSlider) component).getMinimum();
+    return getComponent().getMinimum();
   }
   
   /**
@@ -94,7 +97,7 @@ public class BSlider extends Widget
   
   public void setMinimum(int value)
   {
-    ((JSlider) component).setMinimum(value);
+    getComponent().setMinimum(value);
   }
   
   /**
@@ -103,7 +106,7 @@ public class BSlider extends Widget
   
   public int getMaximum()
   {
-    return ((JSlider) component).getMaximum();
+    return getComponent().getMaximum();
   }
   
   /**
@@ -112,7 +115,7 @@ public class BSlider extends Widget
   
   public void setMaximum(int value)
   {
-    ((JSlider) component).setMaximum(value);
+    getComponent().setMaximum(value);
   }
   
   /**
@@ -121,7 +124,7 @@ public class BSlider extends Widget
   
   public int getValue()
   {
-    return ((JSlider) component).getValue();
+    return getComponent().getValue();
   }
   
   /**
@@ -133,7 +136,7 @@ public class BSlider extends Widget
     try
     {
       suppressEvents++;
-      ((JSlider) component).setValue(value);
+      getComponent().setValue(value);
     }
     finally
     {
@@ -147,7 +150,7 @@ public class BSlider extends Widget
   
   public Orientation getOrientation()
   {
-    int orient = ((JSlider) component).getOrientation();
+    int orient = getComponent().getOrientation();
     return (orient == HORIZONTAL.value ? HORIZONTAL : VERTICAL);
   }
   
@@ -157,7 +160,7 @@ public class BSlider extends Widget
   
   public void setOrientation(Orientation orientation)
   {
-    ((JSlider) component).setOrientation(orientation.value);
+    getComponent().setOrientation(orientation.value);
     invalidateSize();
   }
   
@@ -167,7 +170,7 @@ public class BSlider extends Widget
   
   public int getMajorTickSpacing()
   {
-    return ((JSlider) component).getMajorTickSpacing();
+    return getComponent().getMajorTickSpacing();
   }
   
   /**
@@ -180,7 +183,7 @@ public class BSlider extends Widget
   
   public void setMajorTickSpacing(int spacing)
   {
-    JSlider slider = (JSlider) component;
+    JSlider slider = getComponent();
     slider.setMajorTickSpacing(spacing);
     if (spacing < slider.getMinorTickSpacing())
       slider.setMinorTickSpacing(spacing);
@@ -193,7 +196,7 @@ public class BSlider extends Widget
   
   public int getMinorTickSpacing()
   {
-    return ((JSlider) component).getMinorTickSpacing();
+    return getComponent().getMinorTickSpacing();
   }
   
   /**
@@ -206,7 +209,7 @@ public class BSlider extends Widget
   
   public void setMinorTickSpacing(int spacing)
   {
-    JSlider slider = (JSlider) component;
+    JSlider slider = getComponent();
     slider.setMinorTickSpacing(spacing);
     if (spacing > slider.getMajorTickSpacing())
       slider.setMajorTickSpacing(spacing);
@@ -218,7 +221,7 @@ public class BSlider extends Widget
   
   public boolean getShowTicks()
   {
-    return ((JSlider) component).getPaintTicks();
+    return getComponent().getPaintTicks();
   }
   
   /**
@@ -227,7 +230,7 @@ public class BSlider extends Widget
   
   public void setShowTicks(boolean show)
   {
-    ((JSlider) component).setPaintTicks(show);
+    getComponent().setPaintTicks(show);
   }
   
   /**
@@ -236,7 +239,7 @@ public class BSlider extends Widget
   
   public boolean getShowLabels()
   {
-    return ((JSlider) component).getPaintLabels();
+    return getComponent().getPaintLabels();
   }
   
   /**
@@ -245,7 +248,7 @@ public class BSlider extends Widget
   
   public void setShowLabels(boolean show)
   {
-    ((JSlider) component).setPaintLabels(show);
+    getComponent().setPaintLabels(show);
   }
   
   /**
@@ -254,7 +257,7 @@ public class BSlider extends Widget
   
   public boolean getSnapToTicks()
   {
-    return ((JSlider) component).getSnapToTicks();
+    return getComponent().getSnapToTicks();
   }
   
   /**
@@ -263,7 +266,7 @@ public class BSlider extends Widget
   
   public void setSnapToTicks(boolean snap)
   {
-    ((JSlider) component).setSnapToTicks(snap);
+    getComponent().setSnapToTicks(snap);
   }
   
   /**

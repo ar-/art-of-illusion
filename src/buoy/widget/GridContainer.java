@@ -46,7 +46,12 @@ public class GridContainer extends WidgetContainer
     numRows = rows;
     numCols = cols;
   }
-  
+
+  public JPanel getComponent()
+  {
+    return (JPanel) component;
+  }
+
   /**
    * Get the number of children in this container.
    */
@@ -65,9 +70,9 @@ public class GridContainer extends WidgetContainer
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList ls = new ArrayList(numCols*numRows);
+    ArrayList<Widget> ls = new ArrayList<Widget>(numCols*numRows);
     for (int i = 0; i < child.length; i++)
       for (int j = 0; j < child[i].length; j++)
         if (child[i][j] != null)
@@ -99,7 +104,7 @@ public class GridContainer extends WidgetContainer
   {
     // Work out the positions of every row and column.
     
-    Dimension dim = component.getSize();
+    Dimension dim = getComponent().getSize();
     int cellXBound[] = new int [numCols+1];
     int cellYBound[] = new int [numRows+1];
     double xsize = dim.width/numCols;
@@ -162,7 +167,7 @@ public class GridContainer extends WidgetContainer
       remove(col, row);
     child[col][row] = widget;
     childLayout[col][row] = layout;
-    ((JPanel) component).add(widget.component);
+    getComponent().add(widget.getComponent());
     setAsParent(widget);
     invalidateSize();
   }
@@ -334,7 +339,7 @@ public class GridContainer extends WidgetContainer
       for (int j = 0; j < child[i].length; j++)
         if (child[i][j] == widget)
         {
-          ((JPanel) component).remove(widget.component);
+          getComponent().remove(widget.getComponent());
           removeAsParent(widget);
           child[i][j] = null;
           childLayout[i][j] = null;
@@ -352,7 +357,7 @@ public class GridContainer extends WidgetContainer
   
   public void remove(int col, int row)
   {
-    ((JPanel) component).remove(child[col][row].component);
+    getComponent().remove(child[col][row].getComponent());
     removeAsParent(child[col][row]);
     child[col][row] = null;
     childLayout[col][row] = null;
@@ -365,7 +370,7 @@ public class GridContainer extends WidgetContainer
   
   public void removeAll()
   {
-    ((JPanel) component).removeAll();
+    getComponent().removeAll();
     for (int i = 0; i < child.length; i++)
       for (int j = 0; j < child[i].length; j++)
         if (child[i][j] != null)

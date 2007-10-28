@@ -41,7 +41,7 @@ public class BList extends Widget
   {
     defaultModel = new DefaultListModel();
     component = createComponent();
-    ((JList) component).addListSelectionListener(new ListSelectionListener() {
+    getComponent().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent ev)
       {
         dispatchEvent(new SelectionChangedEvent(BList.this, ev.getValueIsAdjusting()));
@@ -77,7 +77,7 @@ public class BList extends Widget
   public BList(ListModel model)
   {
     this();
-    ((JList) component).setModel(model);
+    getComponent().setModel(model);
   }
   
   /**
@@ -89,7 +89,13 @@ public class BList extends Widget
   {
     return new JList(defaultModel);
   }
-  
+
+
+  public JList getComponent()
+  {
+    return (JList) component;
+  }
+
   /**
    * Set the contents of the list to the objects in an array.  This completely replaces the contents of the
    * list, removing any objects that were previously in it.
@@ -122,9 +128,8 @@ public class BList extends Widget
   public void setContents(Collection c)
   {
     defaultModel.clear();
-    Iterator it = c.iterator();
-    while (it.hasNext())
-      defaultModel.addElement(it.next());
+    for (Object obj : c)
+      defaultModel.addElement(obj);
     updateScrollPane();
   }
   
@@ -139,7 +144,6 @@ public class BList extends Widget
   
   public void add(Object o)
   {
-    int index = defaultModel.size();
     defaultModel.addElement(o);
     updateScrollPane();
   }
@@ -210,7 +214,7 @@ public class BList extends Widget
   
   public ListModel getModel()
   {
-    return ((JList) component).getModel();
+    return getComponent().getModel();
   }
   
   /**
@@ -219,7 +223,7 @@ public class BList extends Widget
   
   public void setModel(ListModel model)
   {
-    ((JList) component).setModel(model);
+    getComponent().setModel(model);
   }
 
   /**
@@ -234,10 +238,10 @@ public class BList extends Widget
     BScrollPane sp = (BScrollPane) getParent();
     BScrollBar sb = sp.getVerticalScrollBar();
     if (sb != null)
-      sb.setMaximum(component.getHeight());
+      sb.setMaximum(getComponent().getHeight());
     sb = sp.getHorizontalScrollBar();
     if (sb != null)
-      sb.setMaximum(component.getWidth());
+      sb.setMaximum(getComponent().getWidth());
   }
   
   /**
@@ -246,7 +250,7 @@ public class BList extends Widget
   
   public int getItemCount()
   {
-    return ((JList) component).getModel().getSize();
+    return getComponent().getModel().getSize();
   }
   
   /**
@@ -255,7 +259,7 @@ public class BList extends Widget
   
   public Object getItem(int index)
   {
-    return ((JList) component).getModel().getElementAt(index);
+    return getComponent().getModel().getElementAt(index);
   }
 
   /**
@@ -264,7 +268,7 @@ public class BList extends Widget
   
   public boolean isMultipleSelectionEnabled()
   {
-    return (((JList) component).getSelectionMode() != ListSelectionModel.SINGLE_SELECTION);
+    return (getComponent().getSelectionMode() != ListSelectionModel.SINGLE_SELECTION);
   }
   
   /**
@@ -273,7 +277,7 @@ public class BList extends Widget
   
   public void setMultipleSelectionEnabled(boolean multiple)
   {
-    ((JList) component).setSelectionMode(multiple ? ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
+    getComponent().setSelectionMode(multiple ? ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
   }
   
   /**
@@ -282,7 +286,7 @@ public class BList extends Widget
   
   public int getPreferredVisibleRows()
   {
-    return ((JList) component).getVisibleRowCount();
+    return getComponent().getVisibleRowCount();
   }
   
   /**
@@ -291,7 +295,7 @@ public class BList extends Widget
   
   public void setPreferredVisibleRows(int rows)
   {
-    ((JList) component).setVisibleRowCount(rows);
+    getComponent().setVisibleRowCount(rows);
     invalidateSize();
   }
 
@@ -301,7 +305,7 @@ public class BList extends Widget
   
   public boolean isSelected(int index)
   {
-    return ((JList) component).isSelectedIndex(index);
+    return getComponent().isSelectedIndex(index);
   }
 
   /**
@@ -310,7 +314,7 @@ public class BList extends Widget
   
   public int getSelectedIndex()
   {
-    return ((JList) component).getSelectedIndex();
+    return getComponent().getSelectedIndex();
   }
 
   /**
@@ -319,7 +323,7 @@ public class BList extends Widget
   
   public int [] getSelectedIndices()
   {
-    return ((JList) component).getSelectedIndices();
+    return getComponent().getSelectedIndices();
   }
 
   /**
@@ -328,7 +332,7 @@ public class BList extends Widget
   
   public Object getSelectedValue()
   {
-    return ((JList) component).getSelectedValue();
+    return getComponent().getSelectedValue();
   }
 
   /**
@@ -337,7 +341,7 @@ public class BList extends Widget
   
   public Object [] getSelectedValues()
   {
-    return ((JList) component).getSelectedValues();
+    return getComponent().getSelectedValues();
   }
   
   /**
@@ -346,7 +350,7 @@ public class BList extends Widget
   
   public void clearSelection()
   {
-    ((JList) component).clearSelection();
+    getComponent().clearSelection();
   }
   
   /**
@@ -356,9 +360,9 @@ public class BList extends Widget
   public void setSelected(int index, boolean selected)
   {
     if (selected)
-      ((JList) component).addSelectionInterval(index, index);
+      getComponent().addSelectionInterval(index, index);
     else
-      ((JList) component).removeSelectionInterval(index, index);
+      getComponent().removeSelectionInterval(index, index);
   }
   
   /**
@@ -369,7 +373,7 @@ public class BList extends Widget
   
   public void scrollToItem(int index)
   {
-    ((JList) component).ensureIndexIsVisible(index);
+    getComponent().ensureIndexIsVisible(index);
   }
 
   /**

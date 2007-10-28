@@ -36,7 +36,7 @@ public class BSpinner extends Widget
   public BSpinner()
   {
     component = createComponent();
-    ((JSpinner) component).addChangeListener(new ChangeListener() {
+    getComponent().addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent ev)
       {
         if (suppressEvents == 0)
@@ -54,7 +54,7 @@ public class BSpinner extends Widget
   public BSpinner(SpinnerModel model)
   {
     this();
-    ((JSpinner) component).setModel(model);
+    getComponent().setModel(model);
   }
 
   /**
@@ -119,13 +119,18 @@ public class BSpinner extends Widget
     return new JSpinner();
   }
 
+  public JSpinner getComponent()
+  {
+    return (JSpinner) component;
+  }
+
   /**
    * Get the current value of the spinner.
    */
   
   public Object getValue()
   {
-    return ((JSpinner) component).getValue();
+    return getComponent().getValue();
   }
 
   /**
@@ -137,7 +142,7 @@ public class BSpinner extends Widget
     try
     {
       suppressEvents++;
-      ((JSpinner) component).setValue(value);
+      getComponent().setValue(value);
     }
     finally
     {
@@ -155,7 +160,7 @@ public class BSpinner extends Widget
   
   public void commitEdit() throws ParseException
   {
-    ((JSpinner) component).commitEdit();
+    getComponent().commitEdit();
   }
   
   /**
@@ -164,7 +169,7 @@ public class BSpinner extends Widget
   
   public SpinnerModel getModel()
   {
-    return ((JSpinner) component).getModel();
+    return getComponent().getModel();
   }
   
   /**
@@ -173,6 +178,6 @@ public class BSpinner extends Widget
   
   public void setModel(SpinnerModel model)
   {
-    ((JSpinner) component).setModel(model);
+    getComponent().setModel(model);
   }
 }

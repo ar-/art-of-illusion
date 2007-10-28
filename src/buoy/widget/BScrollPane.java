@@ -125,15 +125,15 @@ public class BScrollPane extends WidgetContainer
       }
     };
     vscroll = new ScrollPaneScrollBar(0, 1, 0, 100, BScrollBar.VERTICAL);
-    panel.add(vscroll.component);
+    panel.add(vscroll.getComponent());
     setAsParent(vscroll);
-    ((JScrollBar) vscroll.component).getModel().addChangeListener(scrollListener);
-    vscroll.component.addMouseWheelListener(wheelListener);
+    vscroll.getComponent().getModel().addChangeListener(scrollListener);
+    vscroll.getComponent().addMouseWheelListener(wheelListener);
     hscroll = new ScrollPaneScrollBar(0, 1, 0, 100, BScrollBar.HORIZONTAL);
-    panel.add(hscroll.component);
+    panel.add(hscroll.getComponent());
     setAsParent(hscroll);
-    ((JScrollBar) hscroll.component).getModel().addChangeListener(scrollListener);
-    hscroll.component.addMouseWheelListener(wheelListener);
+    hscroll.getComponent().getModel().addChangeListener(scrollListener);
+    hscroll.getComponent().addMouseWheelListener(wheelListener);
     panel.setViewport(contentPort = new ContentViewport());
     panel.setRowHeader(rowHeaderPort = new JViewport());
     panel.setColumnHeader(colHeaderPort = new JViewport());
@@ -170,6 +170,11 @@ public class BScrollPane extends WidgetContainer
   protected JScrollPane createComponent()
   {
     return new ScrollPaneComponent();
+  }
+
+  public JScrollPane getComponent()
+  {
+    return (JScrollPane) component;
   }
 
   /**
@@ -416,9 +421,9 @@ public class BScrollPane extends WidgetContainer
    * Get a Collection containing all child Widgets of this container.
    */
   
-  public Collection getChildren()
+  public Collection<Widget> getChildren()
   {
-    ArrayList ls = new ArrayList(5);
+    ArrayList<Widget> ls = new ArrayList<Widget>(5);
     if (content != null)
       ls.add(content);
     if (rowHeader != null)
@@ -517,7 +522,7 @@ public class BScrollPane extends WidgetContainer
       Dimension size = new Dimension(colHeaderSize);
       if (forceWidth)
         size.width = forceSize.width;
-      colHeader.component.setSize(size);
+      colHeader.getComponent().setSize(size);
     }
     rowHeaderPort.setBounds(new Rectangle(0, topMargin, leftMargin, viewBounds.height));
     if (rowHeader != null)
@@ -525,7 +530,7 @@ public class BScrollPane extends WidgetContainer
       Dimension size = new Dimension(rowHeaderSize);
       if (forceHeight)
         size.height = forceSize.height;
-      rowHeader.component.setSize(size);
+      rowHeader.getComponent().setSize(size);
     }
     
     // Set the size of the content Widget.
@@ -538,7 +543,7 @@ public class BScrollPane extends WidgetContainer
         size.width = forceSize.width;
       if (forceHeight)
         size.height = forceSize.height;
-      content.component.setSize(size);
+      content.getComponent().setSize(size);
     }
 
     // On a Macintosh, if the scroll pane is in the lower right corner of a resizable window,
@@ -569,25 +574,25 @@ public class BScrollPane extends WidgetContainer
     
     // Set up the scrollbars.
     
-    hscroll.component.setBounds(new Rectangle(leftMargin, viewBounds.y+viewBounds.height, hScrollLength, bottomMargin));
+    hscroll.getComponent().setBounds(new Rectangle(leftMargin, viewBounds.y+viewBounds.height, hScrollLength, bottomMargin));
     if (content == null)
       hscroll.setEnabled(false);
     else
     {
       hscroll.setEnabled(true);
-      int width = content.component.getWidth();
+      int width = content.getComponent().getWidth();
       hscroll.setMaximum(width);
       if (hscroll.getValue()+viewBounds.width > width)
         hscroll.setValue(width-viewBounds.width);
     }
     hscroll.setExtent(viewBounds.width);
-    vscroll.component.setBounds(new Rectangle(viewBounds.x+viewBounds.width, topMargin, rightMargin, vScrollLength));
+    vscroll.getComponent().setBounds(new Rectangle(viewBounds.x+viewBounds.width, topMargin, rightMargin, vScrollLength));
     if (content == null)
       vscroll.setEnabled(false);
     else
     {
       vscroll.setEnabled(true);
-      int height = content.component.getHeight();
+      int height = content.getComponent().getHeight();
       vscroll.setMaximum(height);
       if (vscroll.getValue()+viewBounds.height > height)
         vscroll.setValue(height-viewBounds.height);
@@ -652,9 +657,9 @@ public class BScrollPane extends WidgetContainer
       // Find the preferred size for the content viewport.
       
       Dimension contentPrefSize = (content == null ? new Dimension() : content.getPreferredSize());
-      if (content != null && content.component instanceof Scrollable)
+      if (content != null && content.getComponent() instanceof Scrollable)
       {
-        Dimension prefScrollSize = ((Scrollable) content.component).getPreferredScrollableViewportSize();
+        Dimension prefScrollSize = ((Scrollable) content.getComponent()).getPreferredScrollableViewportSize();
         contentPrefSize = new Dimension(Math.min(contentPrefSize.width, prefScrollSize.width), Math.min(contentPrefSize.height, prefScrollSize.height));
       }
       if (preferredViewSize != null)
@@ -767,15 +772,15 @@ public class BScrollPane extends WidgetContainer
     
     public int getUnitIncrement(int direction)
     {
-      if (content != null && content.component instanceof Scrollable)
-        return ((Scrollable) content.component).getScrollableUnitIncrement(contentPort.getViewRect(), getOrientation().value, direction);
+      if (content != null && content.getComponent() instanceof Scrollable)
+        return ((Scrollable) content.getComponent()).getScrollableUnitIncrement(contentPort.getViewRect(), getOrientation().value, direction);
       return super.getUnitIncrement(direction);
     }
 
     public int getBlockIncrement(int direction)
     {
-      if (content != null && content.component instanceof Scrollable)
-        return ((Scrollable) content.component).getScrollableBlockIncrement(contentPort.getViewRect(), getOrientation().value, direction);
+      if (content != null && content.getComponent() instanceof Scrollable)
+        return ((Scrollable) content.getComponent()).getScrollableBlockIncrement(contentPort.getViewRect(), getOrientation().value, direction);
       return super.getBlockIncrement(direction);
     }
   }
