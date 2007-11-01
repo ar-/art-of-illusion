@@ -31,11 +31,6 @@ public class CustomWidget extends Widget
     opaque = true;
   }
 
-  public Component getComponent()
-  {
-    return (JComponent) component;
-  }
-
   /**
    * Set the smallest size at which this Widget can reasonably be drawn.  When a WidgetContainer lays out
    * its contents, it will attempt never to make this Widget smaller than its minimum size.
