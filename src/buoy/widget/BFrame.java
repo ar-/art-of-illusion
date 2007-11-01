@@ -3,6 +3,8 @@ package buoy.widget;
 import buoy.event.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.lang.ref.*;
 import javax.swing.*;
 
 /**
@@ -28,6 +30,7 @@ public class BFrame extends WindowWidget
 {
   private BMenuBar menubar;
   private ImageIcon icon;
+  private static WeakHashMap<Frame, WeakReference<BFrame>> frameMap = new WeakHashMap<Frame,WeakReference<BFrame>>();
   
   /**
    * Create a new BFrame.
@@ -38,6 +41,7 @@ public class BFrame extends WindowWidget
     component = createComponent();
     getComponent().getContentPane().setLayout(null);
     getComponent().setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    frameMap.put(getComponent(), new WeakReference<BFrame>(this));
   }
 
   /**
@@ -275,6 +279,26 @@ public class BFrame extends WindowWidget
   protected JRootPane getRootPane()
   {
     return ((JFrame) getComponent()).getRootPane();
+  }
+
+  /**
+   * Get a list of all BFrames that currently exist.
+   */
+
+  public static List<BFrame> getFrames()
+  {
+    ArrayList<BFrame> list = new ArrayList<BFrame>();
+    for (Frame frame : Frame.getFrames())
+    {
+      WeakReference<BFrame> ref = frameMap.get(frame);
+      if (ref != null)
+      {
+        BFrame bf = ref.get();
+        if (bf != null)
+          list.add(bf);
+      }
+    }
+    return list;
   }
 
   /**
