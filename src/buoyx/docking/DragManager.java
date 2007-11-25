@@ -86,19 +86,14 @@ class DragManager
       // Create a component to act as the marker.
 
       dragMarker = new DragMarker();
-      Container parent = ev.getWidget().getComponent().getParent();
-      while (parent != null && !(parent instanceof JLayeredPane))
-        parent = parent.getParent();
-      if (parent == null)
-        return;
-      ((JLayeredPane) parent).add(dragMarker, JLayeredPane.DRAG_LAYER);
+      dragMarker.setVisible(true);
     }
     dragTarget = findDragTarget(ev);
 
     // Figure out the location for the marker.
 
     Rectangle targetBounds;
-    Container parent;
+    Component targetComponent;
     if (dragTarget != null)
     {
       DockingContainer dock = dragTarget.container;
@@ -107,7 +102,7 @@ class DragManager
       else
         targetBounds = dock.getTabBounds(dragTarget.tab);
       dragMarker.setHilighted(true);
-      parent = dock.getComponent().getParent();
+      targetComponent = dock.getComponent();
     }
     else
     {
@@ -116,19 +111,14 @@ class DragManager
       Point pos = ev.getPoint();
       targetBounds = new Rectangle(outline.x+pos.x, outline.y+pos.y, outline.width, outline.height);
       dragMarker.setHilighted(false);
-      parent = ev.getComponent().getParent();
+      targetComponent = ev.getComponent().getParent();
     }
 
-    // Transform the rectangle to the layered pane's coordinates.
+    // Transform the rectangle to screen coordinates.
 
-    while (!(parent instanceof JLayeredPane))
-    {
-      Rectangle parentPos = parent.getBounds();
-      targetBounds.x += parentPos.x;
-      targetBounds.y += parentPos.y;
-      parent = parent.getParent();
-    }
-    dragMarker.setBounds(targetBounds);
+    Point targetOrigin = new Point(targetBounds.x, targetBounds.y);
+    SwingUtilities.convertPointToScreen(targetOrigin, targetComponent);
+    dragMarker.setBounds(targetOrigin.x, targetOrigin.y, targetBounds.width, targetBounds.height);
 
     // Also set the cursor.
 
@@ -142,11 +132,7 @@ class DragManager
     if (!inDrag)
       return;
     if (dragMarker != null)
-    {
-      Container markerParent = dragMarker.getParent();
-      markerParent.remove(dragMarker);
-      markerParent.repaint();
-    }
+      dragMarker.dispose();
     dragMarker = null;
     DockingEvent event = null;
     if (dragTarget != null)
@@ -362,30 +348,31 @@ class DragManager
     }
   }
 
-  private static class DragMarker extends JPanel
+  private static class DragMarker extends JWindow
   {
     private boolean hilight;
 
     public DragMarker()
     {
       setBackground(new Color(0, 0, 0, 0));
-    }
-
-    public void paintComponent(Graphics g)
-    {
-      Dimension size = getSize();
-      Graphics2D g2 = (Graphics2D) g;
-      if (hilight)
-      {
-        g2.setPaint(ditheredPaint);
-        g2.setStroke(new BasicStroke(2));
-      }
-      else
-      {
-        g2.setColor(Color.black);
-        g2.setStroke(new BasicStroke(1));
-      }
-      g2.drawRect(0, 0, size.width-1, size.height-1);
+      add(new JPanel() {
+        public void paintComponent(Graphics g)
+        {
+          Dimension size = getSize();
+          Graphics2D g2 = (Graphics2D) g;
+          if (hilight)
+          {
+            g2.setPaint(ditheredPaint);
+            g2.setStroke(new BasicStroke(2));
+          }
+          else
+          {
+            g2.setColor(Color.black);
+            g2.setStroke(new BasicStroke(1));
+          }
+          g2.drawRect(0, 0, size.width-1, size.height-1);
+        }
+      }, BorderLayout.CENTER);
     }
 
     public void setHilighted(boolean hilight)
