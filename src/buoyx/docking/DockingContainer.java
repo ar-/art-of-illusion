@@ -17,8 +17,8 @@ import java.awt.*;
  * <p>
  * Once you create one or more DockingContainers and add DockableWidgets to them, the user is free to rearrange
  * them by dragging them with the mouse.  This includes reordering the Widgets in a tab, moving them between
- * tabs, and even moving a Widget from one DockingContainer to a different DockingContainer in the same
- * window.
+ * tabs, moving a Widget from one DockingContainer to a different DockingContainer in the same window, and
+ * detaching a Widget so that it appears in a separate dialog.
  * <p>
  * Whenever the user performs a drag, a {@link DockingEvent} is dispatched to report the event.  When the
  * drag is from one DockingContainer to another one, both the source and target containers will dispatch

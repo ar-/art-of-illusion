@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
-import java.awt.dnd.*;
+import java.util.*;
 
 /**
  * This is a non-public class which is used internally by the docking framework.  It coordinates the
@@ -28,6 +28,7 @@ class DragManager
 
   private static DragManager manager;
   private static TexturePaint ditheredPaint;
+  private static WeakHashMap<WidgetContainer, HashSet<DetachedDockingContainer>> detachedDocks;
 
   static
   {
@@ -39,6 +40,7 @@ class DragManager
     dithered.setRGB(0, 1, 0xFF000000);
     dithered.setRGB(1, 0, 0xFF000000);
     ditheredPaint = new TexturePaint(dithered, new Rectangle(2, 2));
+    detachedDocks = new WeakHashMap<WidgetContainer, HashSet<DetachedDockingContainer>>();
   }
 
   private DragManager()
@@ -86,7 +88,6 @@ class DragManager
       // Create a component to act as the marker.
 
       dragMarker = new DragMarker();
-      dragMarker.setVisible(true);
     }
     dragTarget = findDragTarget(ev);
 
@@ -97,6 +98,13 @@ class DragManager
     if (dragTarget != null)
     {
       DockingContainer dock = dragTarget.container;
+      if (dock == originalContainer && dragTarget.tab == originalTab && (originalIndex == -1 || originalIndex == dragTarget.index || originalIndex == dragTarget.index-1 || dragTarget.index == -1))
+      {
+        // It isn't actually being moved.
+
+        dragMarker.setVisible(false);
+        return;
+      }
       if (dragTarget.index > -1 && dragTarget.tab == dock.getSelectedTab())
         targetBounds = findInsertionAreaBounds(dragTarget.container, dragTarget.tab, dragTarget.index);
       else
@@ -119,27 +127,48 @@ class DragManager
     Point targetOrigin = new Point(targetBounds.x, targetBounds.y);
     SwingUtilities.convertPointToScreen(targetOrigin, targetComponent);
     dragMarker.setBounds(targetOrigin.x, targetOrigin.y, targetBounds.width, targetBounds.height);
-
-    // Also set the cursor.
-
-    Component window = SwingUtilities.getWindowAncestor(ev.getWidget().getComponent());
-    if (window != null)
-      window.setCursor(dragTarget == null ? DragSource.DefaultMoveNoDrop : DragSource.DefaultMoveDrop);
+    dragMarker.setVisible(true);
   }
 
   void mouseReleased(WidgetMouseEvent ev)
   {
     if (!inDrag)
       return;
-    if (dragMarker != null)
-      dragMarker.dispose();
+    if (dragMarker == null)
+      return; // It was never actually dragged.
+    dragMarker.dispose();
     dragMarker = null;
     DockingEvent event = null;
+    DetachedDockingContainer detachedWindow = null;
+    Point newWindowPos = null;
+    if (dragTarget == null)
+    {
+      // The target location was not over any existing DockingContainer, so create a new
+      // detached one.
+
+      WidgetContainer parent = draggedWidget.getParent();
+      while (!(parent instanceof WindowWidget))
+        parent = parent.getParent();
+      if (parent instanceof DetachedDockingContainer)
+        parent = ((DetachedDockingContainer) parent).getParent();
+      detachedWindow = new DetachedDockingContainer((WindowWidget) parent);
+      dragTarget = new DragTarget(detachedWindow.dock, 0, 0);
+      newWindowPos = ev.getPoint();
+      newWindowPos.x += outline.x;
+      newWindowPos.y += outline.y;
+      SwingUtilities.convertPointToScreen(newWindowPos, ev.getWidget().getComponent());
+    }
     if (dragTarget != null)
     {
       // Move this Widget to its new location.
 
       DockingContainer dock = dragTarget.container;
+      if (dock == originalContainer && dragTarget.tab == originalTab && (originalIndex == -1 || originalIndex == dragTarget.index || originalIndex == dragTarget.index-1 || dragTarget.index == -1))
+      {
+        // It wasn't actually moved.
+
+        return;
+      }
       int tabToDisplay = dock.getSelectedTab();
       if (dragTarget.index == -1)
         dragTarget.index = (dragTarget.tab == dock.getTabCount() ? 0 : dock.getTabChildCount(dragTarget.tab));
@@ -184,12 +213,17 @@ class DragManager
       if (tabToDisplay > -1 && tabToDisplay < dock.getTabCount())
         dock.setSelectedTab(tabToDisplay);
     }
+    originalContainer.layoutChildren();
+    if (detachedWindow != null)
+    {
+      // Position and display the newly create DetachedDockingContainer.
 
-    // Reset the cursor.
-
-    Component window = SwingUtilities.getWindowAncestor(ev.getWidget().getComponent());
-    if (window != null)
-      window.setCursor(null);
+      detachedWindow.pack();
+      detachedWindow.setBounds(new Rectangle(newWindowPos.x, newWindowPos.y, detachedWindow.getBounds().width, detachedWindow.getBounds().height));
+      detachedWindow.setVisible(true);
+    }
+    if (originalContainer.getChildCount() == 0 && originalContainer.getParent() instanceof DetachedDockingContainer)
+      ((DetachedDockingContainer) originalContainer.getParent()).dispose();
     dragTarget = null;
     inDrag = false;
 
@@ -205,19 +239,45 @@ class DragManager
 
   private DragTarget findDragTarget(WidgetMouseEvent ev)
   {
-    // First, find the parent window, and convert the point to the window's coordinate system.
-
     WidgetContainer parent = ev.getWidget().getParent();
     while (!(parent instanceof WindowWidget))
       parent = parent.getParent();
+    if (parent instanceof DetachedDockingContainer)
+      parent = ((DetachedDockingContainer) parent).getParent();
+    DragTarget target = null;
+
+    // First check all DetachedDockingContainers for the window (since they float in
+    // front of it).
+
+    HashSet<DetachedDockingContainer> detached = detachedDocks.get(parent);
+    if (detached != null)
+      for (DetachedDockingContainer dock : detached)
+      {
+        target = findDragTargetInWindow(ev, dock);
+        if (target != null)
+          break;
+      }
+
+    // If the drag was not to a DetachedDockingContainer, check all DockingContainers in
+    // the main window.
+
+    if (target == null)
+      target = findDragTargetInWindow(ev, (WindowWidget) parent);
+    return target;
+  }
+
+  private DragTarget findDragTargetInWindow(WidgetMouseEvent ev, WindowWidget window)
+  {
+    // Convert the point to the window's coordinate system.
+
     Point pos = ev.getPoint();
-    tranformPointToWindow(ev.getWidget(), pos);
+    tranformPointToWindow(ev.getWidget(), window, pos);
 
     // Now see what it is over.
 
     DockingContainer dock = null;
     DragTarget target = null;
-    WidgetContainer container = parent;
+    WidgetContainer container = window;
     boolean found;
     do
     {
@@ -267,22 +327,6 @@ class DragManager
         }
       }
     } while (found && target == null);
-    if (target != null)
-    {
-      if (originalContainer == dock)
-      {
-        // It's being dragged to a new location within the same DockingContainer it's already
-        // in.  Make sure it isn't the same location it's already in.
-
-        if (originalTab == target.tab)
-        {
-          // It's being dragged within the same tab.
-
-          if (originalIndex == -1 || originalIndex == target.index || originalIndex == target.index-1 || target.index == -1)
-            return null; // This wouldn't move it.
-        }
-      }
-    }
     return target;
   }
 
@@ -312,15 +356,10 @@ class DragManager
     return bounds;
   }
 
-  private static void tranformPointToWindow(Widget widget, Point point)
+  private static void tranformPointToWindow(Widget widget, WindowWidget window, Point point)
   {
-    Container parent = widget.getComponent().getParent();
-    while (!(parent instanceof Window))
-    {
-      point.x += parent.getX();
-      point.y += parent.getY();
-      parent = parent.getParent();
-    }
+    SwingUtilities.convertPointToScreen(point, widget.getComponent());
+    SwingUtilities.convertPointFromScreen(point, window.getComponent());
   }
 
   private static void tranformRectangleToWindow(Widget widget, Rectangle rect)
@@ -340,7 +379,7 @@ class DragManager
     public int tab;
     public int index;
 
-    public DragTarget(DockingContainer container, int tab, int index)
+    DragTarget(DockingContainer container, int tab, int index)
     {
       this.container = container;
       this.tab = tab;
@@ -348,11 +387,15 @@ class DragManager
     }
   }
 
+  /**
+   * This class is a transparent window that is used to display drag feedback.
+   */
+
   private static class DragMarker extends JWindow
   {
     private boolean hilight;
 
-    public DragMarker()
+    DragMarker()
     {
       setBackground(new Color(0, 0, 0, 0));
       add(new JPanel() {
@@ -378,6 +421,42 @@ class DragManager
     public void setHilighted(boolean hilight)
     {
       this.hilight = hilight;
+    }
+  }
+
+  /**
+   * This class is a dialog for holding DockableWidgets that have been detached
+   * from their parent window.
+   */
+
+  private static class DetachedDockingContainer extends BDialog
+  {
+    private DockingContainer dock;
+
+    DetachedDockingContainer(WindowWidget parentWindow)
+    {
+      super(parentWindow, false);
+      dock = new DockingContainer();
+      setContent(dock);
+      HashSet<DetachedDockingContainer> detached = detachedDocks.get(parentWindow);
+      if (detached == null)
+      {
+        detached = new HashSet<DetachedDockingContainer>();
+        detachedDocks.put(parentWindow, detached);
+      }
+      detached.add(this);
+      dock.addEventLink(DockingEvent.class, new Object() {
+        void processEvent()
+        {
+          dock.getSplitPane().getComponent().setDividerSize(0);
+        }
+      });
+    }
+
+    public void dispose()
+    {
+      detachedDocks.get(getParent()).remove(this);
+      super.dispose();
     }
   }
 }
