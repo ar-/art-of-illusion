@@ -106,7 +106,7 @@ public class DockingContainer extends WidgetContainer
     ArrayList<DockableWidget> newTab = new ArrayList<DockableWidget>();
     newTab.add(widget);
     childrenInTab.add(newTab);
-    rebuildContents(getDockedChildCount() > 1);
+    rebuildContents(getDockedChildCount() > 1 && (content == null || !content.getBounds().equals(splitPane.getBounds())));
   }
 
   /**
@@ -127,7 +127,7 @@ public class DockingContainer extends WidgetContainer
       return;
     }
     childrenInTab.get(tab).add(indexInTab, widget);
-    rebuildContents(getDockedChildCount() > 1);
+    rebuildContents(getDockedChildCount() > 1 && (content == null || !content.getBounds().equals(splitPane.getBounds())));
   }
 
   /**

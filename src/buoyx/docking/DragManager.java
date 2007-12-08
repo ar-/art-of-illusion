@@ -87,7 +87,7 @@ class DragManager
     {
       // Create a component to act as the marker.
 
-      dragMarker = new DragMarker();
+      dragMarker = new DragMarker(ev.getComponent().getGraphicsConfiguration());
     }
     dragTarget = findDragTarget(ev);
 
@@ -128,6 +128,7 @@ class DragManager
     SwingUtilities.convertPointToScreen(targetOrigin, targetComponent);
     dragMarker.setBounds(targetOrigin.x, targetOrigin.y, targetBounds.width, targetBounds.height);
     dragMarker.setVisible(true);
+    dragMarker.repaint();
   }
 
   void mouseReleased(WidgetMouseEvent ev)
@@ -394,15 +395,42 @@ class DragManager
   private static class DragMarker extends JWindow
   {
     private boolean hilight;
+    private Image screen;
 
-    DragMarker()
+    DragMarker(GraphicsConfiguration config)
     {
-      setBackground(new Color(0, 0, 0, 0));
+      if (System.getProperty("os.name", "").toLowerCase().startsWith("mac os x"))
+      {
+        // On Mac OS X, we can make the window transparent by simply giving it a
+        // transparent background color.
+
+        setBackground(new Color(0, 0, 0, 0));
+      }
+      else
+      {
+        // On other platforms, we need to use the hack of taking a screenshot, then
+        // drawing it as the background of the window.
+
+        try
+        {
+          Robot robot = new Robot(config.getDevice());
+          screen = robot.createScreenCapture(config.getBounds());
+        }
+        catch (AWTException ex)
+        {
+          // Don't worry about it.  The marker just won't be transparent.
+        }
+      }
       add(new JPanel() {
         public void paintComponent(Graphics g)
         {
           Dimension size = getSize();
           Graphics2D g2 = (Graphics2D) g;
+          if (screen != null)
+          {
+            Point pos = getLocationOnScreen();
+            g2.drawImage(screen, -pos.x, -pos.y, null);
+          }
           if (hilight)
           {
             g2.setPaint(ditheredPaint);
@@ -413,7 +441,7 @@ class DragManager
             g2.setColor(Color.black);
             g2.setStroke(new BasicStroke(1));
           }
-          g2.drawRect(0, 0, size.width-1, size.height-1);
+          g2.drawRect(1, 1, size.width-2, size.height-2);
         }
       }, BorderLayout.CENTER);
     }
@@ -429,7 +457,7 @@ class DragManager
    * from their parent window.
    */
 
-  private static class DetachedDockingContainer extends BDialog
+  public static class DetachedDockingContainer extends BDialog
   {
     private DockingContainer dock;
 
