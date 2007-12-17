@@ -16,7 +16,7 @@ import java.util.*;
  * @author Peter Eastman
  */
 
-class DragManager
+public class DragManager
 {
   private boolean inDrag;
   private DockableWidget draggedWidget;
@@ -87,7 +87,7 @@ class DragManager
     {
       // Create a component to act as the marker.
 
-      dragMarker = new DragMarker(ev.getComponent().getGraphicsConfiguration());
+      dragMarker = new DragMarker(ev.getComponent());
     }
     dragTarget = findDragTarget(ev);
 
@@ -98,15 +98,13 @@ class DragManager
     if (dragTarget != null)
     {
       DockingContainer dock = dragTarget.container;
-      if (dock == originalContainer && dragTarget.tab == originalTab && (originalIndex == -1 || originalIndex == dragTarget.index || originalIndex == dragTarget.index-1 || dragTarget.index == -1))
-      {
-        // It isn't actually being moved.
-
-        dragMarker.setVisible(false);
-        return;
-      }
       if (dragTarget.index > -1 && dragTarget.tab == dock.getSelectedTab())
-        targetBounds = findInsertionAreaBounds(dragTarget.container, dragTarget.tab, dragTarget.index);
+      {
+        if (dock == originalContainer && dragTarget.tab == originalTab && (originalIndex == -1 || originalIndex == dragTarget.index || originalIndex == dragTarget.index-1 || dragTarget.index == -1))
+          targetBounds = dock.getChild(dragTarget.tab, (originalIndex != -1 && dragTarget.index == originalIndex+1) || dragTarget.index == dock.getTabChildCount(dragTarget.tab) ? dragTarget.index-1 : dragTarget.index).getBounds();
+        else
+          targetBounds = findInsertionAreaBounds(dragTarget.container, dragTarget.tab, dragTarget.index);
+      }
       else
         targetBounds = dock.getTabBounds(dragTarget.tab);
       dragMarker.setHilighted(true);
@@ -397,8 +395,9 @@ class DragManager
     private boolean hilight;
     private Image screen;
 
-    DragMarker(GraphicsConfiguration config)
+    DragMarker(Component parent)
     {
+      super(SwingUtilities.getWindowAncestor(parent));
       if (System.getProperty("os.name", "").toLowerCase().startsWith("mac os x"))
       {
         // On Mac OS X, we can make the window transparent by simply giving it a
@@ -413,6 +412,7 @@ class DragManager
 
         try
         {
+          GraphicsConfiguration config = parent.getGraphicsConfiguration();
           Robot robot = new Robot(config.getDevice());
           screen = robot.createScreenCapture(config.getBounds());
         }
@@ -430,6 +430,10 @@ class DragManager
           {
             Point pos = getLocationOnScreen();
             g2.drawImage(screen, -pos.x, -pos.y, null);
+          }
+          else
+          {
+            g2.clearRect(0, 0, getWidth(), getHeight());
           }
           if (hilight)
           {
@@ -479,6 +483,11 @@ class DragManager
           dock.getSplitPane().getComponent().setDividerSize(0);
         }
       });
+    }
+    
+    public DockingContainer getDockingContainer()
+    {
+      return dock;
     }
 
     public void dispose()
