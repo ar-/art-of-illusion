@@ -393,7 +393,6 @@ public class DragManager
   private static class DragMarker extends JWindow
   {
     private boolean hilight;
-    private Image screen;
 
     DragMarker(Component parent)
     {
@@ -407,45 +406,29 @@ public class DragManager
       }
       else
       {
-        // On other platforms, we need to use the hack of taking a screenshot, then
-        // drawing it as the background of the window.
-
-        try
-        {
-          GraphicsConfiguration config = parent.getGraphicsConfiguration();
-          Robot robot = new Robot(config.getDevice());
-          screen = robot.createScreenCapture(config.getBounds());
-        }
-        catch (AWTException ex)
-        {
-          // Don't worry about it.  The marker just won't be transparent.
-        }
+        // There's no good way to do transparent windows on other systems, so just
+        // give it a white background.
+        
+        setBackground(Color.WHITE);
       }
       add(new JPanel() {
         public void paintComponent(Graphics g)
         {
           Dimension size = getSize();
           Graphics2D g2 = (Graphics2D) g;
-          if (screen != null)
-          {
-            Point pos = getLocationOnScreen();
-            g2.drawImage(screen, -pos.x, -pos.y, null);
-          }
-          else
-          {
-            g2.clearRect(0, 0, getWidth(), getHeight());
-          }
+          g2.clearRect(0, 0, getWidth(), getHeight());
           if (hilight)
           {
             g2.setPaint(ditheredPaint);
             g2.setStroke(new BasicStroke(2));
+            g2.drawRect(1, 1, size.width-2, size.height-2);
           }
           else
           {
             g2.setColor(Color.black);
             g2.setStroke(new BasicStroke(1));
+            g2.drawRect(0, 0, size.width-1, size.height-1);
           }
-          g2.drawRect(1, 1, size.width-2, size.height-2);
         }
       }, BorderLayout.CENTER);
     }
