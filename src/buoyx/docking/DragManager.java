@@ -448,7 +448,7 @@ public class DragManager
   {
     private DockingContainer dock;
 
-    DetachedDockingContainer(WindowWidget parentWindow)
+    public DetachedDockingContainer(WindowWidget parentWindow)
     {
       super(parentWindow, false);
       dock = new DockingContainer();
